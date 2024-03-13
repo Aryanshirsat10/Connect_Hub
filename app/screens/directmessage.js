@@ -1,25 +1,24 @@
 import { View, Text,Image, TouchableOpacity, TextInput } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import { Link } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
-const Explore = () => {
+const Directmsg = ({sender,content}) => {
+  const navigation = useNavigation();
   return (
-    <View className="flex-1">
+    <View className="flex-1 mt-7">
       <View className="flex-row items-center p-4 border-b">
-        <TouchableOpacity className="mr-4">
+        <TouchableOpacity className="mr-4" onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="black" />
         </TouchableOpacity>
-        <View className="flex-row items-center">
+        <View className="flex flex-col items-center justify-center w-[80%]">
           <Image
             className="w-10 h-10 rounded-full"
             source={{ uri: 'https://github.com/shadcn.png' }}
             resizeMode="cover"
           />
-          <Text className="ml-2 font-bold">T</Text>
-        </View>
-        <View className="ml-4">
           <Text className="font-semibold">Tobias</Text>
-          <Text className="text-xs text-gray-500">has notifications silenced</Text>
         </View>
       </View>
       <View className="flex-1 overflow-y-auto">
@@ -45,4 +44,4 @@ const Explore = () => {
   )
 }
 
-export default Explore
+export default Directmsg

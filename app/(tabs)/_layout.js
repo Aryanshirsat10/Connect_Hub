@@ -1,7 +1,8 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Foundation,Feather,Ionicons  } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Foundation,Feather,Ionicons, AntDesign  } from '@expo/vector-icons';
+import { Link, Tabs } from 'expo-router';
+import { Button, TouchableOpacity, View } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -13,7 +14,15 @@ export default function TabLayout() {
         options={{
           title: 'ConnectHub',
           tabBarIcon: ({ color }) => <Foundation size={28} name="home" color={color} />,
-          
+          headerRight: () => (
+            <View className="pr-5">
+              <Link href="/screens/messages" asChild>
+                <TouchableOpacity>
+                <AntDesign name="message1" size={28} color="black" />
+                </TouchableOpacity>
+              </Link>
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
