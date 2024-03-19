@@ -14,7 +14,7 @@ const messageslist = [
 const messages = () => {
   return (
     <View className="bg-white">
-        <View className="flex-row items-center justify-between border-t p-2">
+        <View className="flex-row items-center justify-between border-t border-gray-300 p-2">
         <TouchableOpacity className="rounded-full p-3">
             <Feather name="search" size={24} color="grey" />
         </TouchableOpacity>    
@@ -24,7 +24,7 @@ const messages = () => {
           placeholderTextColor="#999"
         />
         <TouchableOpacity className="rounded-full p-3">
-          <Ionicons name="mic" size={24} color="black" />
+          <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
       </View>
         {messageslist.map((message) => (

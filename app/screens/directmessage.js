@@ -1,14 +1,17 @@
 import { View, Text,Image, TouchableOpacity, TextInput } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import { Feather } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import ChatBubble from 'react-native-chat-bubble';
+
 
 const Directmsg = ({sender,content}) => {
   const navigation = useNavigation();
   return (
     <View className="flex-1 mt-7">
-      <View className="flex-row items-center p-4 border-b">
+      <View className="flex-row items-center p-4 border-b border-gray-300">
         <TouchableOpacity className="mr-4" onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="black" />
         </TouchableOpacity>
@@ -21,10 +24,37 @@ const Directmsg = ({sender,content}) => {
           <Text className="font-semibold">Tobias</Text>
         </View>
       </View>
-      <View className="flex-1 overflow-y-auto">
+      <View className="flex-1 overflow-y-auto p-4">
         {/* Content goes here */}
+        <ChatBubble
+          isOwnMessage={true}
+          bubbleColor='#94c4f7'
+          tailColor='#94c4f7'
+          withTail={false}
+          onPress={() => console.log("Bubble Pressed!")}
+        >
+          <Text className="flex flex-wrap">Your message content</Text>
+        </ChatBubble>
+        <ChatBubble
+          isOwnMessage={true}
+          bubbleColor='#94c4f7'
+          tailColor='#94c4f7'
+          withTail={true}
+          onPress={() => console.log("Bubble Pressed!")}
+        >
+          <Text>Your message content</Text>
+        </ChatBubble>
+        <ChatBubble
+          isOwnMessage={false}
+          bubbleColor='#1084ff'
+          tailColor='#1084ff'
+          withTail={true}
+          onPress={() => console.log("Bubble Pressed!")}
+        >
+          <Text>Your message content</Text>
+        </ChatBubble>
       </View>
-      <View className="flex-row items-center justify-between border-t p-2">
+      <View className="flex-row items-center justify-between p-2">
         <TouchableOpacity className="rounded-full p-3">
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
@@ -34,10 +64,10 @@ const Directmsg = ({sender,content}) => {
           placeholderTextColor="#999"
         />
         <TouchableOpacity className="rounded-full p-3">
-          <Ionicons name="mic" size={24} color="black" />
+        <Feather name="send" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      <View className="flex-row justify-between border-t p-2">
+      <View className="flex-row justify-between p-2">
         {/* Icon buttons go here */}
       </View>
     </View>

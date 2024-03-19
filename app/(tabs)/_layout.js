@@ -3,6 +3,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Foundation,Feather,Ionicons, AntDesign  } from '@expo/vector-icons';
 import { Link, Tabs } from 'expo-router';
 import { Button, TouchableOpacity, View } from 'react-native';
+import HeaderLeft from '../components/HeaderLeft';
+
 
 export default function TabLayout() {
   return (
@@ -23,6 +25,21 @@ export default function TabLayout() {
               </Link>
             </View>
           ),
+          headerLeft: () => (
+            <View className="pl-5">
+            <Link href="/screens/profile" asChild>
+            <TouchableOpacity>
+              {/* <Image
+                className="w-10 h-10 rounded-full bg-slate-600"
+                source={{ uri: userProfileImage }} // Assuming userProfileImage is a URL to the user's profile image
+                resizeMode="cover"
+              /> */}
+              <View className='w-10 h-10 rounded-full bg-slate-500'> 
+              </View>
+            </TouchableOpacity>
+            </Link>
+          </View>
+          ),
         }}
       />
       <Tabs.Screen
@@ -42,15 +59,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="notifications"
         options={{
-          title: 'Post',
-          tabBarIcon: ({ color }) => <Feather size={28} name="bell" color={color} />,
+          title: 'Network',
+          tabBarIcon: ({ color }) => <Ionicons name="people-outline" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="jobs"
         options={{
           title: 'Jobs',
-          tabBarIcon: ({ color }) => <Ionicons  size={28} name="bag-handle-outline" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome  size={28} name="briefcase" color={color} />,
         }}
       />
     </Tabs>

@@ -14,7 +14,7 @@ const App = () => {
         <SafeAreaView>
             <View className="flex justify-center items-center w-full h-full flex-col">
                 <Text className="text-4xl font-bold text-purple-400">ConnectHUb</Text>
-                <Link href="/screens/login" asChild>
+                <Link href="/login" asChild>
                 <Pressable>
                   <Text className="text-2xl font-semibold text-purple-400">Login</Text>
                 </Pressable>
