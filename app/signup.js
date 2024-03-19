@@ -1,7 +1,7 @@
 import { Link } from 'expo-router';
 import React, {useState} from 'react'
 import Pockethost from 'pocketbase';
-import { View,Text, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import { View,Text, SafeAreaView, TextInput, TouchableOpacity,Alert } from 'react-native';
 import { useNavigation } from 'expo-router';
 import pb from './services/connection';
 const login =   () => {
@@ -37,19 +37,29 @@ const login =   () => {
         "passwordConfirm": confirm.toLowerCase().toString()
     }
   try {
-    console.log(data)
-    const record1 = await pb.collection('users').getFirstListItem(`email=${data.email}`, {
-        expand: 'relField1,relField2.subRelField',
-    });
-    console.log(record1);
-    const record = await pb.collection('users').create(data);
-    console.log(record);
-    // if(pb.authStore.isValid.toString()){
-    //   navigation.navigate('(tabs)');
-    // }
+    console.log(`data:${data.email}`);
+    const existinguser = await pb.collection('users').find({email: data.email});
+    console.log(`user:${existinguser}`);
+    console.log(`record1:${record1}`);
+    if(existinguser){
+      Alert.alert("User already exists");
+    }else{
+      const record = await pb.collection('users').create(data);
+      console.log(`record: ${JSON.stringify(record, null, 2)}`);
+      if(pb.authStore.isValid.toString()){
+      navigation.navigate('(tabs)');
+      }
+    }
   } catch (error) {
       // Handle other errors
-      console.error('Failed to authenticate:', error);
+      if (error.data && error.data.email && error.data.email.code === "validation_invalid_email") {
+        Alert.alert("The email is invalid or already in use.");
+    } else if (error.data && error.data.username && error.data.username.code === "validation_invalid_username") {
+        Alert.alert("The username is invalid or already in use.");
+    } else {
+        // Handle other errors
+        console.error('Failed to authenticate:', error);
+    }
   }
  };
   return (
@@ -104,11 +114,11 @@ const login =   () => {
             value={confirm}
           />
           {/* <Link href="/(tabs)" asChild> */}
-          <TouchableOpacity className="w-full bg-blue-500 p-2 rounded-md" onPress={handleLogin}>
+          <TouchableOpacity className="w-full bg-blue-500 p-2 rounded-full" onPress={handleLogin}>
             <Text className="text-white text-center">Signup</Text>
           </TouchableOpacity>
           {/* </Link> */}
-          <TouchableOpacity className="w-full bg-gray-200 p-2 rounded-md" onPress={handleLoginWithGoogle}>
+          <TouchableOpacity className="w-full bg-gray-200 p-2 rounded-full" onPress={handleLoginWithGoogle}>
             <Text className="text-black text-center">Signup with Google</Text>
           </TouchableOpacity>
         </View>

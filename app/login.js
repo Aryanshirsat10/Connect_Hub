@@ -1,5 +1,6 @@
 import { Link } from 'expo-router';
 import React, {useState} from 'react'
+import Svg, { Path } from 'react-native-svg';
 import Pockethost from 'pocketbase';
 import { View,Text, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from 'expo-router';
@@ -22,7 +23,7 @@ const login =   () => {
       // For example, navigate to the next screen
       navigation.navigate('(tabs)');
     } catch (error) {
-      console.error('Failed to authenticate with Google:', error);
+      console.error('Failed to authenticate with Google:', error.data);
       // Handle error here
     }
  };
@@ -35,6 +36,7 @@ const login =   () => {
     // console.log(pb.authStore.token);
     // console.log(pb.authStore.model.id);
     if(pb.authStore.isValid.toString()){
+      console.log("login successfull");
       navigation.navigate('(tabs)');
     }
   } catch (error) {
@@ -77,19 +79,47 @@ const login =   () => {
             value={password}
           />
           {/* <Link href="/(tabs)" asChild> */}
-          <TouchableOpacity className="w-full bg-blue-500 p-2 rounded-md" onPress={handleLogin}>
+          <TouchableOpacity className="w-full bg-blue-500 p-2 rounded-full" onPress={handleLogin}>
             <Text className="text-white text-center">Login</Text>
           </TouchableOpacity>
           {/* </Link> */}
-          <TouchableOpacity className="w-full bg-gray-200 p-2 rounded-md" onPress={handleLoginWithGoogle}>
-            <Text className="text-black text-center">Login with Google</Text>
+          <TouchableOpacity className="w-full bg-gray-200 p-2 rounded-full flex flex-row justify-center" onPress={handleLoginWithGoogle}>
+          <Svg width="20" height="20" viewBox="0 0 512 512">
+              <Path
+                fill="#FBBB00"
+                d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256
+                c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456
+                C103.821,274.792,107.225,292.797,113.47,309.408z"
+              />
+              <Path
+                fill="#518EF8"
+                d="M507.527,208.176C510.467,223.662,512,239.655,512,256c0,18.328-1.927,36.206-5.598,53.451
+                c-12.462,58.683-45.025,109.925-90.134,146.187l-0.014-0.014l-73.044-3.727l-10.338-64.535
+                c29.932-17.554,53.324-45.025,65.646-77.911h-136.89V208.176h138.887L507.527,208.176L507.527,208.176z"
+              />
+              <Path
+                fill="#28B446"
+                d="M416.253,455.624l0.014,0.014C372.396,490.901,316.666,512,256,512
+                c-97.491,0-182.252-54.491-225.491-134.681l82.961-67.91c21.619,57.698,77.278,98.771,142.53,98.771
+                c28.047,0,54.323-7.582,76.87-20.818L416.253,455.624z"
+              />
+              <Path
+                fill="#F14336"
+                d="M419.404,58.936l-82.933,67.896c-23.335-14.586-50.919-23.012-80.471-23.012
+                c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0
+                C318.115,0,375.068,22.126,419.404,58.936z"
+              />
+          </Svg>
+            <Text className="text-black text-center ml-3">
+              Login with Google
+              </Text>
           </TouchableOpacity>
         </View>
-        <View className="mt-4 text-center text-sm">
+        <View className="mt-4 text-center text-sm flex flex-row">
           <Text>Don't have an account?</Text>
           <Link href="/signup" asChild>
           <TouchableOpacity>
-            <Text className="underline">Sign up</Text>
+            <Text className="underline text-blue-500 ml-2">Sign up</Text>
           </TouchableOpacity>
           </Link>
         </View>
