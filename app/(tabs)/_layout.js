@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Foundation,Feather,Ionicons, AntDesign  } from '@expo/vector-icons';
+import { Foundation,Feather,Ionicons, AntDesign,MaterialIcons  } from '@expo/vector-icons';
 import { Link, Tabs } from 'expo-router';
-import { Button, TouchableOpacity, View } from 'react-native';
+import { Button, Image, Text, TouchableOpacity, View } from 'react-native';
 import HeaderLeft from '../components/HeaderLeft';
-
+import pb from '../services/connection';
 
 export default function TabLayout() {
+  const [user ,setUser] = useState({});
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const record = await pb.collection('users').getOne(`${pb.authStore.model.id}`);
+        console.log(`record:${JSON.stringify(record, null, 2)}`);
+        setUser(record);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchUser();
+ }, []);
   return (
     <Tabs screenOptions={{ 
       headerTitleAlign: 'center',
@@ -15,7 +29,18 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'ConnectHub',
-          tabBarIcon: ({ color }) => <Foundation size={28} name="home" color={color} />,
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ focused,color }) => {
+            // Use the focused state to decide which icon to show
+            if (focused) {
+              // Return the filled icon when the tab is selected
+              return <Foundation size={28} name="home" color={color} />;
+            } else {
+              // Return the outlined icon when the tab is not selected
+              // Assuming you have an outlined icon named "home-outline" in the Foundation icon set
+              return <AntDesign size={28} name="home" color={color} />;
+            }
+          },
           headerRight: () => (
             <View className="pr-5">
               <Link href="/screens/messages" asChild>
@@ -30,12 +55,13 @@ export default function TabLayout() {
             <Link href="/screens/profile" asChild>
             <TouchableOpacity>
               {/* <Image
-                className="w-10 h-10 rounded-full bg-slate-600"
-                source={{ uri: userProfileImage }} // Assuming userProfileImage is a URL to the user's profile image
+                className="w-10 h-10 rounded-full"
+                source={{uri:user.avatar}} // Assuming userProfileImage is a URL to the user's profile image
                 resizeMode="cover"
               /> */}
-              <View className='w-10 h-10 rounded-full bg-slate-500'> 
+              <View className='w-10 h-10 rounded-full bg-slate-500'>
               </View>
+              <Text>{user?.id}</Text>
             </TouchableOpacity>
             </Link>
           </View>

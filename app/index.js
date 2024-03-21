@@ -1,5 +1,6 @@
 import { View,ScrollView, Text,Image,TouchableOpacity, SafeAreaView,Pressable } from 'react-native';
 import React from 'react';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import { Link } from 'expo-router';
 import { useNavigation } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,7 +11,8 @@ const App = () => {
     navigation.goBack(); // Navigate back
  };
   return (
-    <SafeAreaProvider>
+    <RootSiblingParent>
+        <SafeAreaProvider>
         <SafeAreaView>
             <View className="flex justify-center items-center w-full h-full flex-col">
                 <Text className="text-4xl font-bold text-purple-400">ConnectHUb</Text>
@@ -27,6 +29,7 @@ const App = () => {
             </View>
         </SafeAreaView>
     </SafeAreaProvider>
+    </RootSiblingParent>
   )
 }
 

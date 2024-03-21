@@ -4,6 +4,7 @@ import CustomHeader from '../components/CustomHeader';
 import { useNavigation } from 'expo-router';
 import Post from  '../components/posts';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import pb from '../services/connection';
 
 const index = () => {
   const navigation = useNavigation();

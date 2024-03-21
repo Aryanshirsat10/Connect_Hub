@@ -1,10 +1,17 @@
 import { Link } from 'expo-router';
 import React, {useState} from 'react'
 import Svg, { Path } from 'react-native-svg';
-import Pockethost from 'pocketbase';
-import { View,Text, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+// import Toast from 'react-native-root-toast';
+import { View,Text, SafeAreaView, TextInput, TouchableOpacity,ToastAndroid, Platform, AlertIOS } from 'react-native';
 import { useNavigation } from 'expo-router';
 import pb from './services/connection';
+function notifyMessage(msg) {
+  if (Platform.OS === 'android') {
+    ToastAndroid.show(msg, ToastAndroid.SHORT)
+  } else {
+    AlertIOS.alert(msg);
+  }
+}
 const login =   () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +43,7 @@ const login =   () => {
     // console.log(pb.authStore.token);
     // console.log(pb.authStore.model.id);
     if(pb.authStore.isValid.toString()){
+      notifyMessage('Login successful');
       console.log("login successfull");
       navigation.navigate('(tabs)');
     }
