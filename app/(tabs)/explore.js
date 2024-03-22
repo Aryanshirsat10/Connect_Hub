@@ -1,6 +1,6 @@
 import { View, Text,Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
 import React from 'react'
-import { Ionicons } from '@expo/vector-icons'
+import { Feather } from '@expo/vector-icons'
 import Recommendpeople from '../components/Recommendpeople'
 import Recommendgroups from '../components/Recommendgroups'
 
@@ -8,12 +8,17 @@ const Explore = () => {
   return (
     <ScrollView>
       <View className="min-h-screen bg-white md:max-w-md md:mx-auto p-2">
-      <View className="mt-1 flex items-center space-x-2 p-5 rounded-full w-full h-3 bg-slate-200">
-        <TextInput
-          className="flex-1 w-full"
-          placeholder="Search"
-          // Add other TextInput props as needed
-        ></TextInput>
+      <View className="flex-row items-center justify-between border-t border-gray-300 p-2">
+        <View className="flex-row bg-gray-200 rounded-full">
+          <TouchableOpacity className="rounded-full p-3 pr-0">
+              <Feather name="search" size={24} color="grey" />
+          </TouchableOpacity>    
+          <TextInput
+            className="flex-1 rounded-full bg-gray-200 px-4 py-2 text-sm"
+            placeholder="Message"
+            placeholderTextColor="#999"
+          />
+        </View>
       </View>
       <View className="mt-1 p-2">
         <Text className="text-xl font-bold">Recommendations</Text>

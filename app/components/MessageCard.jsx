@@ -1,12 +1,12 @@
 import React from 'react'
 import { View,Text, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from 'expo-router';
+import { useNavigation, router } from 'expo-router';
 
 const MessageCard = ({ content, sender, timestamp }) => {
     const navigation = useNavigation();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('directmessage')}>
+    <TouchableOpacity onPress={() => router.push({pathname: '/screens/directmessage', params : {sender: sender}})}>
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between border-b border-gray-300">
       <View className="flex flex-row">
         <View className="flex items-center">

@@ -1,7 +1,12 @@
-import React from 'react'
-import { View, Text, Image } from 'react-native';
+import React, { useState } from 'react'
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 const Internshipcard = () => {
+  const [isSaved, setIsSaved] = useState(false);
+  const toggleSave = () => {
+    setIsSaved(!isSaved);
+  }
   return (
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between">
       <View className="flex flex-row">
@@ -19,7 +24,9 @@ const Internshipcard = () => {
       </View>
       <View className="flex flex-row gap-4">
         <View>
-        <Image className="w-7 h-7  ml-5" source={require('../../assets/images/bookmark.png')}/>
+        <TouchableOpacity className="ml-5" onPress={toggleSave}>
+        {isSaved ? <FontAwesome name="bookmark" size={32} color="black"/> : <FontAwesome name="bookmark-o" size={32} color="black"/>}
+        </TouchableOpacity>
         </View>
         <View>
         <Entypo name="dots-three-vertical" size={24} color="black" />

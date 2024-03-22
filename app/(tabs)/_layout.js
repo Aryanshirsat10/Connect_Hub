@@ -3,7 +3,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Foundation,Feather,Ionicons, AntDesign,MaterialIcons  } from '@expo/vector-icons';
 import { Link, Tabs } from 'expo-router';
 import { Button, Image, Text, TouchableOpacity, View } from 'react-native';
-import HeaderLeft from '../components/HeaderLeft';
+import UserAvatar from 'react-native-user-avatar';
 import pb from '../services/connection';
 
 export default function TabLayout() {
@@ -21,6 +21,14 @@ export default function TabLayout() {
 
     fetchUser();
  }, []);
+  // Log the updated user state
+  useEffect(() => {
+    console.log(`user:${JSON.stringify(user.avatar, null, 2)}`);
+ }, [user]); // This effect depends on the user state
+ const shouldDisplayAvatar = () => {
+  return user.avatar && user.avatar.trim() !== '';
+};
+
   return (
     <Tabs screenOptions={{ 
       headerTitleAlign: 'center',
@@ -54,14 +62,18 @@ export default function TabLayout() {
             <View className="pl-5">
             <Link href="/screens/profile" asChild>
             <TouchableOpacity>
-              {/* <Image
+            {shouldDisplayAvatar() ? (
+              <Image
                 className="w-10 h-10 rounded-full"
-                source={{uri:user.avatar}} // Assuming userProfileImage is a URL to the user's profile image
+                source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${user.avatar}?token=`}} // Assuming userProfileImage is a URL to the user's profile image
                 resizeMode="cover"
-              /> */}
-              <View className='w-10 h-10 rounded-full bg-slate-500'>
-              </View>
-              <Text>{user?.id}</Text>
+              />
+              ) : (
+                <UserAvatar size={40} name={user.username} />
+              )}
+              {/* <View className='w-10 h-10 rounded-full bg-slate-500'>
+              </View> */}
+              {/* <Text>{user?.id}</Text> */}
             </TouchableOpacity>
             </Link>
           </View>

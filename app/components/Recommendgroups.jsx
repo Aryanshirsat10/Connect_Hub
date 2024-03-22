@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 const Recommendgroups = () => {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const toggleFollow = () => {
+    setIsFollowing(!isFollowing);
+ };
   return (
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between">
       <View className="flex flex-row">
@@ -18,8 +22,8 @@ const Recommendgroups = () => {
         </View>
       </View>
       <View className="flex flex-row gap-4">
-      <TouchableOpacity className="border-gray-300 rounded-lg px-2 py-1 mt-2 bg-[#007AFF] w-20 items-center shadow-xl">
-        <Text className="font-semibold text-lg text-white">Follow</Text>
+      <TouchableOpacity className={`border-gray-300 rounded-lg px-2 py-1 mt-2 ${isFollowing? 'bg-gray-400' : 'bg-[#007AFF]'} ${isFollowing ? 'w-24' : 'w-20'} items-center shadow-xl`} onPress={toggleFollow}>
+        <Text className="font-semibold text-lg text-white">{isFollowing ? 'Following' : 'Follow'}</Text>
       </TouchableOpacity>
       </View>
       

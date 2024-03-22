@@ -5,10 +5,11 @@ import { Feather } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import ChatBubble from 'react-native-chat-bubble';
+import { useLocalSearchParams } from 'expo-router';
 
-
-const Directmsg = ({sender,content}) => {
+const Directmsg = () => {
   const navigation = useNavigation();
+  const { sender } = useLocalSearchParams();
   return (
     <View className="flex-1 mt-7">
       <View className="flex-row items-center p-4 border-b border-gray-300">
@@ -21,7 +22,7 @@ const Directmsg = ({sender,content}) => {
             source={{ uri: 'https://github.com/shadcn.png' }}
             resizeMode="cover"
           />
-          <Text className="font-semibold">Tobias</Text>
+          <Text className="font-semibold pt-2 text-md">{sender}</Text>
         </View>
       </View>
       <View className="flex-1 overflow-y-auto p-4">

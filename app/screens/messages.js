@@ -8,6 +8,7 @@ import MessageCard from '../components/MessageCard';
 const messageslist = [
     { id: 1, content: 'Hello!', sender: 'John Doe', timestamp: '10:00 AM' },
     { id: 2, content: 'How are you?', sender: 'Jane Doe', timestamp: '10:05 AM' },
+    { id: 3, content: 'How are you?', sender: 'Rushiel Sarnaik', timestamp: '10:55 AM' },
     // Add more messages as needed
    ];
    
