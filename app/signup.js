@@ -9,6 +9,7 @@ const login =   () => {
   const [password, setPassword] = useState('');
   const [userName, setuserName] = useState('');
   const [confirm,setConfirm]=useState('');
+  const [name,setName] = useState('');
   const navigation = useNavigation(); 
   const handleLoginWithGoogle = async () => {
     try {
@@ -34,11 +35,12 @@ const login =   () => {
         "email": email.toLowerCase().toString(),
         "emailVisibility": true,
         "password": password.toLowerCase().toString(),
-        "passwordConfirm": confirm.toLowerCase().toString()
+        "passwordConfirm": confirm.toLowerCase().toString(),
+        "name":name.toLowerCase().toString()
     }
   try {
     console.log(`data:${data.email}`);
-    const existinguser = await pb.collection('users').find({email: data.email});
+    const existinguser = await pb.collection('users').getFirstListItem(`email=${data.email}`);
     console.log(`user:${existinguser}`);
     console.log(`record1:${record1}`);
     if(existinguser){
@@ -52,13 +54,20 @@ const login =   () => {
     }
   } catch (error) {
       // Handle other errors
-      if (error.data && error.data.email && error.data.email.code === "validation_invalid_email") {
+      if (error.data && error.data.code === 400) {
+        // Handle the 400 error for existinguser
+        const record = await pb.collection('users').create(data);
+        console.log(`record: ${JSON.stringify(record, null, 2)}`);
+        if(pb.authStore.isValid.toString()){
+            navigation.navigate('login');
+        }
+    } else if (error.data && error.data.email && error.data.email.code === "validation_invalid_email") {
         Alert.alert("The email is invalid or already in use.");
     } else if (error.data && error.data.username && error.data.username.code === "validation_invalid_username") {
         Alert.alert("The username is invalid or already in use.");
     } else {
         // Handle other errors
-        console.error('Failed to authenticate:', error);
+        console.error('Failed to authenticate:', error.data);
     }
   }
  };
@@ -73,6 +82,15 @@ const login =   () => {
         </View>
         <View className="space-y-4 mt-3">
         <View className="space-y-2">
+            <Text className="text-sm font-bold">Name</Text>
+            <TextInput
+              className="border border-gray-300 rounded-md p-2"
+              placeholder="name"
+              onChangeText={setName}
+              value={name}
+            />
+        </View>
+        <View className="space-y-2">
             <Text className="text-sm font-bold">Username</Text>
             <TextInput
               className="border border-gray-300 rounded-md p-2"
@@ -81,7 +99,7 @@ const login =   () => {
               onChangeText={setuserName}
               value={userName}
             />
-          </View>
+        </View>
           <View className="space-y-2">
             <Text className="text-sm font-bold">Email</Text>
             <TextInput
