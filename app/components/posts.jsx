@@ -40,7 +40,7 @@ const Post = ({ postData }) => {
     //   // If the heart was not filled, increase the likes count
     //   setLikesCount(prevCount => prevCount + 1);
     // }
-    setIsHeartFilled(!hasLiked);
+    // setIsHeartFilled(!hasLiked);
     let newLikesCount = isHeartFilled ? likesCount - 1 : likesCount + 1;
     setLikesCount(newLikesCount);
 

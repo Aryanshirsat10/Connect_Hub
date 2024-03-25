@@ -71,8 +71,8 @@ const post = () => {
         console.log("After backend call", record);
         console.log('Post created successfully:', record);
         notifyMessage("Post created successfully");
-        setImage(null);
         setPostDescription('');
+        setImage(null);
         // Optionally, navigate back or clear the form after a successful post
       } catch (error) {
         console.error('Failed to create post:', error);

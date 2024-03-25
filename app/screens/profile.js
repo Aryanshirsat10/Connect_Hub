@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ToastAndroid, Platform,AlertIOS, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ToastAndroid, Platform,AlertIOS, ScrollView,RefreshControl } from 'react-native';
 import pb from "../services/connection";
 import { useNavigation } from 'expo-router';
 import UserAvatar from 'react-native-user-avatar';
@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const ProfileScreen = () => {
   const [image, setImage] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [profileimg, setProfileImg] = useState(null);
   const [user1 ,setUser1] = useState({});
   function notifyMessage(msg) {
@@ -68,17 +69,16 @@ const ProfileScreen = () => {
     }
  };
   const navigation = useNavigation();
+  const fetchUser = async () => {
+    try {
+      const record = await pb.collection('users').getOne(`${pb.authStore.model.id}`);
+      console.log(`record:${JSON.stringify(record, null, 2)}`);
+      setUser1(record);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const record = await pb.collection('users').getOne(`${pb.authStore.model.id}`);
-        console.log(`record:${JSON.stringify(record, null, 2)}`);
-        setUser1(record);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchUser();
     //live update for  profile info
     // const userId = pb.authStore.model.id;
@@ -92,6 +92,15 @@ const ProfileScreen = () => {
     //   pb.collection('users').unsubscribe(userId); // Remove the subscription
     // };
  }, []);
+ const onRefresh = React.useCallback(() => {
+  setRefreshing(true);
+  // Here you can call your fetchPosts and fetchuser functions again
+  // Call the function to fetch posts
+  fetchUser();
+  // to refresh the data. Make sure to set refreshing back to false
+  // once the data is fetched.
+  setRefreshing(false);
+}, []);
  const shouldDisplayAvatar = () => {
   return user1.avatar && user1.avatar.trim() !== '';
 };
@@ -103,7 +112,14 @@ const ProfileScreen = () => {
   navigation.navigate("login");
  }
  return (
-    <ScrollView>
+    <ScrollView
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    }
+    >
       <View className="flex flex-col bg-white w-full mx-auto">
       <View className="relative">
         <Image

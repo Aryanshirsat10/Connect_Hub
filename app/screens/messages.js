@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, Text,Image, TouchableOpacity, TextInput } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text,Image, TouchableOpacity, TextInput, ScrollView, RefreshControl } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
@@ -13,7 +13,23 @@ const messageslist = [
    ];
    
 const messages = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    // Here you can call your fetchPosts and fetchuser functions again
+    // to refresh the data. Make sure to set refreshing back to false
+    // once the data is fetched.
+    setRefreshing(false);
+  }, []);
   return (
+    <ScrollView
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    }
+    >
     <View className="bg-white">
         <View className="flex-row items-center justify-between border-t border-gray-300 p-2">
         <TouchableOpacity className="rounded-full p-3">
@@ -37,6 +53,7 @@ const messages = () => {
         />
       ))}
     </View>
+    </ScrollView>
   )
 }
 
