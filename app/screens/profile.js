@@ -109,7 +109,10 @@ const ProfileScreen = () => {
   console.log(response);
   notifyMessage("Logout successfull");
   console.log("logout successful");
-  navigation.navigate("login");
+  navigation.reset({
+    index: 0,
+    routes: [{ name: 'login' }],
+   });
  }
  return (
     <ScrollView

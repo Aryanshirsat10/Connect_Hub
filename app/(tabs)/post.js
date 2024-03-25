@@ -5,6 +5,7 @@ import { useNavigation } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import pb from '../services/connection';
 import { useState } from 'react';
+import { ScrollView } from 'react-native-web';
 
 
 function notifyMessage(msg) {
@@ -73,6 +74,7 @@ const post = () => {
         notifyMessage("Post created successfully");
         setPostDescription('');
         setImage(null);
+        navigation.navigate("index");
         // Optionally, navigate back or clear the form after a successful post
       } catch (error) {
         console.error('Failed to create post:', error);
