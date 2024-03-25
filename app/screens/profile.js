@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const ProfileScreen = () => {
   const [image, setImage] = useState(null);
+  const [profileimg, setProfileImg] = useState(null);
   const [user1 ,setUser1] = useState({});
   function notifyMessage(msg) {
     if (Platform.OS === 'android') {
@@ -21,7 +22,7 @@ const ProfileScreen = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -31,6 +32,41 @@ const ProfileScreen = () => {
       setImage(result.assets[0].uri);
     }
   };
+  const pickImage1 = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      // aspect: [9, 16],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setProfileImg(result.assets[0].uri);
+      const userId = pb.authStore.model.id;
+      await updateUserAvatar(userId, result.assets[0].uri);
+    }
+  };
+  const updateUserAvatar = async (userId, imageUri) => {
+    try {
+      const formData = new FormData();
+      // Convert the image URI to a file object
+      const file = {
+        uri: imageUri,
+        type: 'multipart/form-data', // Adjust the type based on the image format
+        name: 'avatar.jpg', // Adjust the name as needed
+      };
+      formData.append('avatar', file);
+
+      // Update the user record with the FormData
+      const record = await pb.collection('users').update(userId, formData);
+      console.log('User avatar updated successfully:', record);
+    } catch (error) {
+      console.error('Failed to update user avatar:', error);
+    }
+ };
   const navigation = useNavigation();
   useEffect(() => {
     const fetchUser = async () => {
@@ -44,6 +80,17 @@ const ProfileScreen = () => {
     };
 
     fetchUser();
+    //live update for  profile info
+    // const userId = pb.authStore.model.id;
+    // pb.collection('users').subscribe(userId, function (e) {
+    //   console.log(e.action);
+    //   console.log(e.record);
+    //   setUser1(e.record); // Update the user's profile data
+    // }, { /* other options like expand, custom headers, etc. */ });
+
+    // return () => {
+    //   pb.collection('users').unsubscribe(userId); // Remove the subscription
+    // };
  }, []);
  const shouldDisplayAvatar = () => {
   return user1.avatar && user1.avatar.trim() !== '';
@@ -56,24 +103,6 @@ const ProfileScreen = () => {
   navigation.navigate("login");
  }
  return (
-    // <View className="flex-1 items-center justify-center p-5">
-    //   {shouldDisplayAvatar() ? (
-    //     <Image
-    //     className="w-24 h-24 rounded-full"
-    //     source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${user1.avatar}?token=`}} // Assuming userProfileImage is a URL to the user's profile image
-    //     resizeMode="cover"
-    //   />
-    //   ) : (
-    //     <UserAvatar size={100} name={user1.username} />
-    //   )}
-    //   <Text className="text-xl font-bold mb-2">{user1.username}</Text>
-    //   <Text className="text-lg text-center">{user1.email}</Text>
-    //   <TouchableOpacity className="bg-red-500 p-2" onPress={handleclick}>
-    //     <Text>
-    //       logout
-    //     </Text>
-    //   </TouchableOpacity>
-    // </View>
     <ScrollView>
       <View className="flex flex-col bg-white w-full mx-auto">
       <View className="relative">
@@ -101,9 +130,9 @@ const ProfileScreen = () => {
                 <UserAvatar size={100} name={user1.username} />
             )}
         </View>
-        <TouchableOpacity className="absolute left-60 top-44" onPress={pickImage}>
+        <TouchableOpacity className="absolute left-60 top-44" onPress={pickImage1}>
         <Feather name="camera" size={24} color="black"/>
-        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+        {/* {profileimg && <Image source={{ uri: profileimg }} style={{ width: 200, height: 200 }} />} */}
         </TouchableOpacity>
       </View>
       <View className="pt-16 pb-4 px-4">

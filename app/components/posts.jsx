@@ -1,31 +1,69 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, FlatList} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-const Post = () => {
+import pb from '../services/connection';
+const Post = ({ postData }) => {
+  console.log(`Post Data: ${JSON.stringify(postData,null,2)}`);
+  const currentUserId = pb.authStore.model.id;
+  console.log(`current user:${currentUserId}`)
+  console.log(`likedby${JSON.stringify(postData.likedby)}`);
+  const likedBy = postData.likedby || [];
+
+  // Initialize isHeartFilled based on whether the current user has liked the post
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+  useEffect(() => {
+     setIsHeartFilled(likedBy.includes(currentUserId));
+  }, [likedBy, currentUserId]);
+ 
+  console.log(`hasliked:${isHeartFilled}`);
+  // const [isHeartFilled, setIsHeartFilled] = useState(hasLiked || false);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(postData.likes || 0);
+ 
   const toggleModel = () => {
     setIsModelOpen(!isModelOpen);
   }
   const toggleSave = () => {
     setIsSaved(!isSaved);
   }
-  const toggleHeart = () => {
+  const toggleHeart = async() => {
+    const hasLiked = postData.likedby.includes(currentUserId);
     setIsHeartFilled(!isHeartFilled);
-    if (isHeartFilled) {
-      // If the heart was filled, decrease the likes count
-      setLikesCount(prevCount => prevCount - 1);
-    } else {
-      // If the heart was not filled, increase the likes count
-      setLikesCount(prevCount => prevCount + 1);
-    }
+    // if (isHeartFilled) {
+    //   // If the heart was filled, decrease the likes count
+    //   setLikesCount(prevCount => prevCount - 1);
+    // } else {
+    //   // If the heart was not filled, increase the likes count
+    //   setLikesCount(prevCount => prevCount + 1);
+    // }
+    setIsHeartFilled(!hasLiked);
+    let newLikesCount = isHeartFilled ? likesCount - 1 : likesCount + 1;
+    setLikesCount(newLikesCount);
+
+    let newLikedBy = hasLiked ? postData.likedby.filter(id => id !== currentUserId) : [...postData.likedby, currentUserId];
+
+
+    try {
+      const data = {
+        likes: newLikesCount,
+        likedby: newLikedBy, // Update only the likes field
+      };
+      const response = await pb.collection('posts').update(postData?.id, data);
+      console.log(response);
+      console.log('Likes updated successfully');
+   } catch (error) {
+      console.error('Failed to update likes:', error);
+   }
  };
 
+ const baseImageUrl = `https://connecthub.pockethost.io/api/files/1r45sr6hm3dlqvp/${postData?.id}/`;
+ 
+ // Construct the full URL for the first image in the postcontent array
+ const imageUrl = postData.postcontent.length > 0 ? `${baseImageUrl}${postData.postcontent[0]}` : null;
  return (
     <View className="flex flex-col items-start justify-between p-4 rounded-lg bg-white w-full relative">
         {/* <View className="flex justify-between w-full"> */}
@@ -36,15 +74,15 @@ const Post = () => {
           source={require('../../assets/images/favicon.png')}
         />
         {/* Username */}
-        <View className="flex flex-col mr-10">
-        <Text className="font-semibold">Jane Copper</Text>
+        <View className="flex flex-col mr-7">
+        <Text className="font-semibold pl-2 capitalize text-lg">{postData.expand?.userid?.username}</Text>
         {/* User Description */}
         <Text className="text-sm text-gray-500">Software engineering student</Text>
         </View>
         <TouchableOpacity onPress={toggleModel}>
         <Ionicons name="share-outline" size={32} color="black"/>
         </TouchableOpacity>
-        <TouchableOpacity className="ml-5" onPress={toggleSave}>
+        <TouchableOpacity className="ml-4" onPress={toggleSave}>
         {isSaved ? <FontAwesome name="bookmark" size={32} color="black"/> : <FontAwesome name="bookmark-o" size={32} color="black"/>}
         </TouchableOpacity>
         {/* <Image className="w-8 h-8  ml-5" source={require('../../assets/images/bookmark.png')}/> */}
@@ -72,17 +110,20 @@ const Post = () => {
       </Modal> 
       <View className="flex flex-row justify-between items-center w-full">
         {/* Post Description */}
-      <Text className="text-sm text-gray-500 mt-4">Description about the post</Text>
+      <Text className="text-sm text-gray-500 mt-4">{postData.post_description}</Text>
       {/* Follow Button */}
       <TouchableOpacity className="text-sm  border-gray-300 rounded px-2 py-1 mt-2">
         <Text className="font-semibold text-[#007AFF]">Follow</Text>
       </TouchableOpacity>
       </View>
       <View className="flex flex-col justify-center items-center w-full h-80 mt-8 mb-4">
-      <Image
-          className="w-[340px] h-[320px] rounded-lg justify-center"
-          source={require('../../assets/images/post.jpg')}
-        />
+        {imageUrl && (
+            <Image
+            className="w-[340px] h-[320px] rounded-lg justify-center"
+            source={{uri : imageUrl}} // Assuming userProfileImage is a URL to the user's profile image
+                  resizeMode="cover"
+          />
+        )}
         {/* Likes and Comments*/}
         <View className="bg-white absolute w-40 h-15 top-[88%] flex rounded-lg p-1 pl-2 pt-2">
         <View className=" flex-row w-full justify-between items-center ">
@@ -98,7 +139,7 @@ const Post = () => {
         </View>
         <View className="w-full flex flex-row gap-7">
           <Text className="text-sm text-gray-500">{likesCount} likes</Text>
-          <Text className="text-sm text-gray-500">0 </Text>
+          <Text className="text-sm text-gray-500"></Text>
         </View>
         </View>
       </View>
