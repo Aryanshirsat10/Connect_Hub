@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-const Internshipcard = () => {
+const Internshipcard = ({job}) => {
   const [isSaved, setIsSaved] = useState(false);
   const toggleSave = () => {
     setIsSaved(!isSaved);
@@ -18,8 +18,8 @@ const Internshipcard = () => {
           />
         </View>
         <View className="flex flex-col">
-          <Text className="text-lg font-semibold">Software Developer</Text>
-          <Text className="text-sm text-gray-600">Mumbai, Maharashtra, India</Text>
+          <Text className="text-lg font-semibold">{job.title}</Text>
+          <Text className="text-sm text-gray-600">{job.location}</Text>
         </View>
       </View>
       <View className="flex flex-row gap-4">

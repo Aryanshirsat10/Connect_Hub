@@ -1,24 +1,56 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text,Image, TouchableOpacity, TextInput, ScrollView, RefreshControl } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { Link } from 'expo-router';
+import { Link,useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import MessageCard from '../components/MessageCard';
-const messageslist = [
-    { id: 1, content: 'Hello!', sender: 'John Doe', timestamp: '10:00 AM' },
-    { id: 2, content: 'How are you?', sender: 'Jane Doe', timestamp: '10:05 AM' },
-    { id: 3, content: 'How are you?', sender: 'Rushiel Sarnaik', timestamp: '10:55 AM' },
-    // Add more messages as needed
-   ];
+import pb from '../services/connection';
    
 const messages = () => {
   const [refreshing, setRefreshing] = useState(false);
+  const [messageslist,setMessagesList]=useState([]);
+  const [receiveruser , setReceiverUser] = useState({});
+  const {currentuser} = useLocalSearchParams();
+
+  const fetchmessagelist = async() =>{
+    console.log(`${JSON.stringify(currentuser)}`);
+    try {
+      const records = await pb.collection('chats').getFullList({
+        sort: '-created',
+        expand: 'receiver'
+    });
+    console.log(`messagelist${JSON.stringify(records,null,2)}`);
+
+
+    const enhancedMessages = await Promise.all(records.map(async (record) => {
+      if (record.receiver) {
+        try {
+          const receiverName = await pb.collection('users').getOne(`${record.receiver}`);
+          return { ...record, receiverUser: receiverName };
+        } catch (error) {
+          console.log(error);
+          return record; // Return the original record if there's an error
+        }
+      }
+      return record; // Return the original record if there's no receiver
+    }));
+
+    setMessagesList(enhancedMessages);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    fetchmessagelist();
+  },[]);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     // Here you can call your fetchPosts and fetchuser functions again
     // to refresh the data. Make sure to set refreshing back to false
     // once the data is fetched.
+    fetchmessagelist();
     setRefreshing(false);
   }, []);
   return (
@@ -47,9 +79,10 @@ const messages = () => {
         {messageslist.map((message) => (
         <MessageCard
           key={message.id}
-          content={message.content}
-          sender={message.sender}
-          timestamp={message.timestamp}
+          content={message.text}
+          sender={message.expand?.receiver}
+          timestamp={message.updated}
+          currentuser = {currentuser}
         />
       ))}
     </View>

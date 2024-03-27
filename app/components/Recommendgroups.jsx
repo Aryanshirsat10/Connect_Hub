@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-const Recommendgroups = () => {
+const Recommendgroups = ({group}) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const toggleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -11,13 +11,13 @@ const Recommendgroups = () => {
       <View className="flex flex-row">
         <View className="flex items-center mr-2">
           <Image
-            source={require('../../assets/images/demopost.jpg')}
+            source={{uri : `https://connecthub.pockethost.io/api/files/3fltudul115pos9/${group.id}/${group.groupicon}?token=`}}
             style={{ width: 40, height: 40, borderRadius: 20 }}
             resizeMode="cover"
           />
         </View>
         <View className="flex flex-col">
-          <Text className="text-lg font-semibold">Software Developer</Text>
+          <Text className="text-lg font-semibold">{group.groupname}</Text>
           <Text className="text-md text-gray-600">Suggested for you</Text>
         </View>
       </View>

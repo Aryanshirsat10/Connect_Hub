@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Foundation,Feather,Ionicons, AntDesign,MaterialIcons  } from '@expo/vector-icons';
-import { Link, Tabs } from 'expo-router';
+import { Link, Tabs, router} from 'expo-router';
 import { Button, Image, Text, TouchableOpacity, View } from 'react-native';
 import UserAvatar from 'react-native-user-avatar';
 import pb from '../services/connection';
@@ -51,11 +51,11 @@ export default function TabLayout() {
           },
           headerRight: () => (
             <View className="pr-5">
-              <Link href="/screens/messages" asChild>
-                <TouchableOpacity>
+              {/* <Link href="/screens/messages" asChild> */}
+                <TouchableOpacity onPress={() => router.push({pathname: '/screens/messages', params : {currentuser: user}})}>
                 <AntDesign name="message1" size={28} color="black" />
                 </TouchableOpacity>
-              </Link>
+              {/* </Link> */}
             </View>
           ),
           headerLeft: () => (

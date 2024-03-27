@@ -71,7 +71,7 @@ const Post = ({ postData }) => {
         {/* User Image */}
         <Image
           className="w-10 h-10 rounded-full"
-          source={require('../../assets/images/favicon.png')}
+          source={{uri: `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${postData.expand?.userid?.id}/${postData.expand?.userid?.avatar}?token=`}}
         />
         {/* Username */}
         <View className="flex flex-col mr-7">

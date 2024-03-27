@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-const Recommendpeople = () => {
+const Recommendpeople = ({user1}) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const toggleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -11,13 +11,13 @@ const Recommendpeople = () => {
       <View className="flex flex-row">
         <View className="flex items-center mr-2">
           <Image
-            source={require('../../assets/images/demopost.jpg')}
+             source={{uri: `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${user1.id}/${user1.avatar}?token=`}}
             style={{ width: 40, height: 40, borderRadius: 20 }}
             resizeMode="cover"
           />
         </View>
         <View className="flex flex-col">
-          <Text className="text-lg font-semibold">Software Developer</Text>
+          <Text className="text-lg font-semibold">{user1.name}</Text>
           <Text className="text-md text-gray-600">Suggested for you</Text>
         </View>
       </View>

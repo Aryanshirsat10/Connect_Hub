@@ -1,10 +1,40 @@
 import { View, Text,Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons'
 import Recommendpeople from '../components/Recommendpeople'
 import Recommendgroups from '../components/Recommendgroups'
+import pb from '../services/connection'
 
 const Explore = () => {
+  const [grouplist, setGroupList] = useState([]);
+  const [userlist, setUserList] = useState([]);
+  const fetchAlumni = async()=>{
+    try {
+      const records1 = await pb.collection('users').getFullList({
+        sort: '-created',
+    });
+    setUserList(records1);
+    console.log(`user from explore:${JSON.stringify(records1)}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const fetchgrouplist = async()=>{
+    try {
+      const records = await pb.collection('groups').getFullList({
+        sort: '-created',
+    });
+    setGroupList(records);
+    console.log(`grouplist${JSON.stringify(records)}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    fetchAlumni();
+    fetchgrouplist();
+  },[]);
   return (
     <ScrollView>
       <View className="min-h-screen bg-white md:max-w-md md:mx-auto p-2">
@@ -23,20 +53,16 @@ const Explore = () => {
       <View className="mt-1 p-2">
         <Text className="text-xl font-bold">Recommendations</Text>
         <View className="mt-1 space-y-2" />
-          <Recommendpeople/>
-          <Recommendpeople/>
-          <Recommendpeople/>
-          <Recommendpeople/>
-          <Recommendpeople/>
-          <Recommendpeople/>
+        {userlist.map((user) => (
+              <Recommendpeople key={user.id} user1={user} />
+            ))}
         </View>
         <View className="mt-1 p-2">
         <Text className="text-xl font-bold">Recommended Groups</Text>
         <View className="mt-1 space-y-2" />
-          <Recommendgroups/>
-          <Recommendgroups/>
-          <Recommendgroups/>
-          <Recommendgroups/>
+        {grouplist.map((group) => (
+              <Recommendgroups key={group.id} group={group} />
+            ))}
         </View>
       </View>
     </ScrollView>

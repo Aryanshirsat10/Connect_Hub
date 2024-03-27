@@ -1,10 +1,30 @@
 import { View, Text, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Internshipcard from '../components/Internshipcard';
+import pb from '../services/connection';
+
 
 const jobs = () => {
+  const [joblist,setJobList] = useState([]);
+
+  const fetchjobs = async() =>{
+    try {
+      const records = await pb.collection('internships').getFullList({
+        sort: '-created',
+    });
+    console.log(`internships:${JSON.stringify(records)}`);
+    setJobList(records);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchjobs();
+  }, [])
+  
   return (
     <ScrollView>
       <View className="min-h-screen bg-white md:max-w-md md:mx-auto p-2">
@@ -66,11 +86,9 @@ const jobs = () => {
       <View className="mt-1 p-2">
         <Text className="text-xl font-bold">Internships for you</Text>
         <View className="mt-2 space-y-2" />
-          <Internshipcard/>
-          <Internshipcard/>
-          <Internshipcard/>
-          <Internshipcard/>
-          <Internshipcard/>
+        {joblist.map((job) => (
+              <Internshipcard key={job.id} job={job} />
+            ))}
         </View>
       </View>  
     </ScrollView>

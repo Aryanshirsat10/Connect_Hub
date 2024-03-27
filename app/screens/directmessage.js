@@ -1,5 +1,5 @@
 import { View, Text,Image, TouchableOpacity, TextInput } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { Feather } from '@expo/vector-icons';
 import { Link } from 'expo-router';
@@ -9,7 +9,51 @@ import { useLocalSearchParams } from 'expo-router';
 
 const Directmsg = () => {
   const navigation = useNavigation();
-  const { sender } = useLocalSearchParams();
+  const { sender,currentuser } = useLocalSearchParams();
+  const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  let unsubscribe;
+
+  const sendMessage = async () => {
+    const data = {
+      text: newMessage,
+      user: currentuser.id,
+    };
+    const createdMessage = await pb.collection('chats').create(data);
+    setNewMessage('');
+ };
+
+  useEffect(() => {
+    const fetchInitialMessages = async () => {
+      const resultList = await pb.collection('chats').getFullList( {
+        sort: 'created',
+        expand: 'sender,receiver',
+      });
+      console.log(`result list: ${JSON.stringify(resultList)}`);
+      setMessages(resultList.items);
+    };
+
+    const subscribeToMessages = async () => {
+      unsubscribe = await pb.collection('chats').subscribe('*', async ({ action, record }) => {
+        if (action === 'create') {
+          const user = await pb.collection('users').getOne(record.user);
+          record.expand = { user };
+          setMessages((prevMessages) => [...prevMessages, record]);
+        }
+        if (action === 'delete') {
+          setMessages((prevMessages) => prevMessages.filter((m) => m.id !== record.id));
+        }
+      });
+    };
+
+    fetchInitialMessages();
+    subscribeToMessages();
+
+    return () => {
+      unsubscribe?.();
+    };
+ }, []);
+
   return (
     <View className="flex-1 mt-7">
       <View className="flex-row items-center p-4 border-b border-gray-300">
@@ -27,33 +71,18 @@ const Directmsg = () => {
       </View>
       <View className="flex-1 overflow-y-auto p-4">
         {/* Content goes here */}
-        <ChatBubble
-          isOwnMessage={true}
-          bubbleColor='#94c4f7'
-          tailColor='#94c4f7'
-          withTail={false}
-          onPress={() => console.log("Bubble Pressed!")}
-        >
-          <Text className="flex flex-wrap">Your message content</Text>
-        </ChatBubble>
-        <ChatBubble
-          isOwnMessage={true}
-          bubbleColor='#94c4f7'
-          tailColor='#94c4f7'
-          withTail={true}
-          onPress={() => console.log("Bubble Pressed!")}
-        >
-          <Text>Your message content</Text>
-        </ChatBubble>
-        <ChatBubble
-          isOwnMessage={false}
-          bubbleColor='#1084ff'
-          tailColor='#1084ff'
-          withTail={true}
-          onPress={() => console.log("Bubble Pressed!")}
-        >
-          <Text>Your message content</Text>
-        </ChatBubble>
+        {messages.map((message, index) => (
+          <ChatBubble
+            key={index}
+            isOwnMessage={message.user === currentuser.id}
+            bubbleColor={message.user === currentuser.id ? '#94c4f7' : '#1084ff'}
+            tailColor={message.user === currentuser.id ? '#94c4f7' : '#1084ff'}
+            withTail={true}
+            onPress={() => console.log("Bubble Pressed!")}
+          >
+            <Text>{message.text}</Text>
+          </ChatBubble>
+        ))}
       </View>
       <View className="flex-row items-center justify-between p-2">
         <TouchableOpacity className="rounded-full p-3">
@@ -63,8 +92,10 @@ const Directmsg = () => {
           className="flex-1 rounded-full bg-gray-200 px-4 py-2 text-sm"
           placeholder="Message"
           placeholderTextColor="#999"
+          value={newMessage}
+          onChangeText={setNewMessage}
         />
-        <TouchableOpacity className="rounded-full p-3">
+        <TouchableOpacity className="rounded-full p-3" onPress={sendMessage}>
         <Feather name="send" size={24} color="black" />
         </TouchableOpacity>
       </View>
