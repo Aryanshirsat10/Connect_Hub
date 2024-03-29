@@ -54,7 +54,7 @@ const login =   () => {
     }
   } catch (error) {
       // Handle other errors
-      if (error.data && error.data.code === 404 || error.data && error.data.code === 404 ) {
+      if (error.data && error.data.code === 404 || error.data && error.data.code === 400 ) {
         // Handle the 400 error for existinguser
         const record = await pb.collection('users').create(data);
         console.log(`record: ${JSON.stringify(record, null, 2)}`);
