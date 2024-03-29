@@ -2,9 +2,12 @@ import { Link } from 'expo-router';
 import React, {useState} from 'react'
 import Svg, { Path } from 'react-native-svg';
 // import Toast from 'react-native-root-toast';
-import { View,Text, SafeAreaView, TextInput, TouchableOpacity,ToastAndroid, Platform, AlertIOS } from 'react-native';
+import { View,Text, SafeAreaView, TextInput, TouchableOpacity,ToastAndroid, Platform, AlertIOS,Linking } from 'react-native';
 import { useNavigation } from 'expo-router';
 import pb from './services/connection';
+import 'react-native-url-polyfill/auto';
+import EventSource from "react-native-sse";
+global.EventSource = EventSource;
 function notifyMessage(msg) {
   if (Platform.OS === 'android') {
     ToastAndroid.show(msg, ToastAndroid.SHORT)
@@ -16,21 +19,48 @@ const login =   () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation(); 
-  const handleLoginWithGoogle = async () => {
+  async function handleLoginWithGoogle () {
     try {
       // console.log(pb);
       const authMethods = await pb.collection('users').listAuthMethods();
       console.log(authMethods);
-      const authData = await pb.collection('users').authWithOAuth2({ provider: 'google' });
-      // console.log(authData);
-      // console.log(pb.authStore.isValid);
-      // console.log(pb.authStore.token);
-      // console.log(pb.authStore.model.id);
-      // Handle successful authentication here
-      // For example, navigate to the next screen
+      const authData = await pb.collection('users').authWithOAuth2({ provider: 'google',keepalive:true,
+      scopes:['https://www.googleapis.com/auth/userinfo.profile','https://www.googleapis.com/auth/userinfo.email'],
+      urlCallback :(url) => {
+        console.log(url)
+        var halves = url.split('?')
+          newUrl = halves[0]+'?access_type=offline&prompt=consent&'+halves[1]
+          Linking.openURL(newUrl).catch((err) => {
+            console.log("failed to open url", err)
+        })
+      }
+    });
+      console.log(authData);
+      const meta = authData.meta;
+      // console.log(meta.refreshToken)
+      // pb.authStore.model.refreshToken = meta.refreshToken
+      // await AsyncStorage.setItem('classroomRefresh',meta.refreshToken)
+
+  if (meta.isNew) {
+    const formData = new FormData();
+
+    const response = await fetch(meta.avatarUrl);
+
+    if (response.ok) {
+      const file = await response.blob();
+      formData.append('avatar', file);
+    }
+
+    formData.append('name', meta.name);
+    formData.append('avatar',meta.avatarUrl)
+
+    console.log(meta.avatarUrl)
+    await pb.collection('users').update(authData.record.id, formData);
+    console.log('updated')
+  }
       navigation.navigate('(tabs)');
-    } catch (error) {
-      console.error('Failed to authenticate with Google:', error.data);
+    } catch (err) {
+      console.log(err.originalError,err.response,err.data,err)
       // Handle error here
     }
  };

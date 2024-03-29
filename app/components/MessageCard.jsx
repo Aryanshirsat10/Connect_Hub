@@ -2,11 +2,13 @@ import React from 'react'
 import { View,Text, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, router } from 'expo-router';
+import { format } from 'date-fns';
 
-const MessageCard = ({ content, sender, timestamp,currentuser }) => {
+const MessageCard = ({ content, sender, timestamp,currentuser,id}) => {
     const navigation = useNavigation();
+    const formattedTimestamp = format(new Date(timestamp), 'h:mm a');
   return (
-    <TouchableOpacity onPress={() => router.push({pathname: '/screens/directmessage', params : {sender: sender, currentuser: currentuser}})}>
+    <TouchableOpacity onPress={() => router.push({pathname: '/screens/directmessage', params : {sender: sender?.username , senderprofile: sender?.avatar, senderid: sender?.id, currentuser: currentuser?.id, messageid:id}})}>
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between border-b border-gray-300">
       <View className="flex flex-row">
         <View className="flex items-center">
@@ -23,7 +25,7 @@ const MessageCard = ({ content, sender, timestamp,currentuser }) => {
         </View>
       </View>
       <View className="flex flex-row gap-4">
-      <Text className="text-sm font-light">{timestamp}</Text>
+      <Text className="text-sm font-light">{formattedTimestamp}</Text>
         <View className="flex">
         <Ionicons name="chevron-forward" size={24} color="grey" />
         </View>

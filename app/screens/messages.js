@@ -11,14 +11,13 @@ const messages = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [messageslist,setMessagesList]=useState([]);
   const [receiveruser , setReceiverUser] = useState({});
-  const {currentuser} = useLocalSearchParams();
-
+  const currentuser = pb.authStore.model.id;
   const fetchmessagelist = async() =>{
-    console.log(`${JSON.stringify(currentuser)}`);
+    console.log(currentuser);
     try {
       const records = await pb.collection('chats').getFullList({
         sort: '-created',
-        expand: 'receiver'
+        expand: 'sender,sender1'
     });
     console.log(`messagelist${JSON.stringify(records,null,2)}`);
 
@@ -35,7 +34,7 @@ const messages = () => {
       }
       return record; // Return the original record if there's no receiver
     }));
-
+    console.log(`enhancedmessage:${JSON.stringify(enhancedMessages,null,2)}`);
     setMessagesList(enhancedMessages);
     } catch (error) {
       console.log(error);
@@ -78,11 +77,12 @@ const messages = () => {
       </View>
         {messageslist.map((message) => (
         <MessageCard
-          key={message.id}
+          key={message}
           content={message.text}
-          sender={message.expand?.receiver}
+          sender={currentuser === message.sender ? message.expand?.sender1 : message.expand?.sender}
           timestamp={message.updated}
           currentuser = {currentuser}
+          id={message.id}
         />
       ))}
     </View>

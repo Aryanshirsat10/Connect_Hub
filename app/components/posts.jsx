@@ -125,7 +125,7 @@ const Post = ({ postData }) => {
           />
         )}
         {/* Likes and Comments*/}
-        <View className="bg-white absolute w-40 h-15 top-[88%] flex rounded-lg p-1 pl-2 pt-2">
+        <View className="bg-white absolute w-40 h-15 top-[90%] flex rounded-lg p-1 pl-2 pt-2">
         <View className=" flex-row w-full justify-between items-center ">
         <TouchableOpacity onPress={toggleHeart}>
           {isHeartFilled ? <FontAwesome name="heart" size={24} color="red" /> : <FontAwesome name="heart-o" size={24} color="black" />}

@@ -3,12 +3,16 @@ import { View, Text, Image, TouchableOpacity, ToastAndroid, Platform,AlertIOS, S
 import pb from "../services/connection";
 import { useNavigation } from 'expo-router';
 import UserAvatar from 'react-native-user-avatar';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileScreen = () => {
   const [image, setImage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [connections,setConnections] = useState(0);
+  const [followers,setFollowers] = useState(0);
+  const [following,setFollowing] = useState(0);
   const [profileimg, setProfileImg] = useState(null);
   const [user1 ,setUser1] = useState({});
   function notifyMessage(msg) {
@@ -50,6 +54,23 @@ const ProfileScreen = () => {
       await updateUserAvatar(userId, result.assets[0].uri);
     }
   };
+  //format date
+  function formatDate(dateString) {
+    // Parse the date string into a Date object
+    const date = new Date(dateString);
+    
+    // Array of month names
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+    
+    // Extract the month and year from the Date object
+    const month = monthNames[date.getMonth()]; // getMonth() returns month index starting from 0
+    const year = date.getFullYear(); // getFullYear() returns the year
+    
+    // Return the formatted date string
+    return `${month} ${year}`;
+}
+
   const updateUserAvatar = async (userId, imageUri) => {
     try {
       const formData = new FormData();
@@ -74,6 +95,7 @@ const ProfileScreen = () => {
       const record = await pb.collection('users').getOne(`${pb.authStore.model.id}`);
       console.log(`record:${JSON.stringify(record, null, 2)}`);
       setUser1(record);
+      getUserCounts(record);
     } catch (error) {
       console.log(error);
     }
@@ -114,7 +136,36 @@ const ProfileScreen = () => {
     routes: [{ name: 'login' }],
    });
  }
+
+ function getUserCounts(userData) {
+  // Initialize an object to hold the counts
+  const counts = {
+      connections: 0,
+      followers: 0,
+      following: 0
+  };
+
+  // Check if the user has connections and count them
+  if (userData.Connections && Array.isArray(userData.Connections)) {
+      counts.connections = userData.Connections.length;
+  }
+
+  // Check if the user has followers and count them
+  if (userData.Followers && Array.isArray(userData.Followers)) {
+      counts.followers = userData.Followers.length;
+  }
+
+  // Check if the user is following others and count them
+  if (userData.Following && Array.isArray(userData.Following)) {
+      counts.following = userData.Following.length;
+  }
+  setConnections(counts.connections);
+  setFollowers(counts.followers);
+  setFollowing(counts.following);
+}
+
  return (
+  <SafeAreaView>
     <ScrollView
     refreshControl={
       <RefreshControl
@@ -123,10 +174,13 @@ const ProfileScreen = () => {
       />
     }
     >
-      <View className="flex flex-col bg-white w-full mx-auto">
+      <View className="flex flex-col bg-white w-full mx-auto relative">
+      <TouchableOpacity className="left-3 top-3 absolute z-10 bg-slate-300 rounded-full w-fit" onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={26} color="black" />
+        </TouchableOpacity>
       <View className="relative">
         <Image
-          className="w-full h-40 object-cover"
+          className="w-full h-30 object-cover"
           source={require('../../assets/images/background.png')}
           resizeMode="cover"
         />
@@ -138,7 +192,7 @@ const ProfileScreen = () => {
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </TouchableOpacity>
         </View>
-        <View className="absolute top-24 left-[35%] transform -translate-x-1/2 p-1 bg-white rounded-full border-4 border-white">
+        <View className="absolute top-24 left-[5%] transform -translate-x-1/2 p-1 bg-white rounded-full border-4 border-white">
           {shouldDisplayAvatar() ? (
                 <Image
                 className="w-24 h-24 rounded-full relative"
@@ -149,36 +203,66 @@ const ProfileScreen = () => {
                 <UserAvatar size={100} name={user1.username} />
             )}
         </View>
-        <TouchableOpacity className="absolute left-60 top-44" onPress={pickImage1}>
+        <TouchableOpacity className="absolute left-32 top-44" onPress={pickImage1}>
         <Feather name="camera" size={24} color="black"/>
         {/* {profileimg && <Image source={{ uri: profileimg }} style={{ width: 200, height: 200 }} />} */}
+        </TouchableOpacity>
+        <TouchableOpacity  className="flex h-12 w-32 p-2 absolute top-40 right-5 items-center rounded-full border-2 border-red-400">
+            <Text className="font-bold text-lg">Edit profile</Text>
         </TouchableOpacity>
       </View>
       <View className="pt-16 pb-4 px-4">
         <Text className="text-2xl font-bold">{user1.name}</Text>
-        <Text className="text-lg text-gray-600">Student at KJ Somaiya College of Engineering, Vidyavihar&nbsp;&nbsp;
+        <Text className="text-lg font-semibold text-gray-500">@{user1.username}</Text>
+        {/* <Text className="text-lg text-gray-600">Student at KJ Somaiya College of Engineering, Vidyavihar&nbsp;&nbsp;
           <Feather name="edit" size={20} color="black"/>
         </Text>
         <Text className="text-md text-gray-600">KJ Somaiya College of Engineering, Vidyavihar</Text>
-        <Text className="text-md text-gray-600">Mumbai, Maharashtra, India - 355 connections</Text>
-        <View className="mt-3">
+        <Text className="text-md text-gray-600">Mumbai, Maharashtra, India - 355 connections</Text> */}
+        {/* <View className="mt-3">
           <TouchableOpacity className="mb-2 w-full items-center bg-blue-500 text-white p-2 rounded-lg">
             <Text className="text-white">Open to job opportunities</Text>
             </TouchableOpacity>
           <Text className="text-md text-gray-600">Software Engineer Intern roles</Text>
           <TouchableOpacity className="mt-1 mb-2 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>See all details</Text></TouchableOpacity>
           <TouchableOpacity className="mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>All LinkedIn members</Text></TouchableOpacity>
-        </View>
+        </View> */}
+        <Text className="text-lg font-medium text-gray-500">Just an engineering student trying new things</Text>
       </View>
       <View className="px-4">
-        <Text className="text-lg font-semibold">About</Text>
-        <Text className="text-sm text-gray-600">Just an engineering student trying new things</Text>
+        <Text className="text-lg font-semibold"><Ionicons name="calendar-outline" size={18} color="black" /> Joined {formatDate(user1.created)}</Text>
+      </View>
+      <View className="mt-4 px-4 flex flex-row gap-x-3">
+        <View className="flex flex-row gap-x-1">
+        <Text className="text-lg font-semibold">{connections}</Text>
+        <Text className="text-lg font-medium text-gray-500">Connections</Text>
+        </View>
+        <View className="flex flex-row gap-x-1">
+        <Text className="text-lg font-semibold">{following}</Text>
+        <Text className="text-lg font-medium text-gray-500">Following</Text>
+        </View>
+        <View className="flex flex-row gap-x-1">
+        <Text className="text-lg font-semibold">{followers}</Text>
+        <Text className="text-lg font-medium text-gray-500">Followers</Text>
+        </View>
       </View>
       <View className="mt-4 px-4">
-        <Text className="text-lg font-semibold">Featured</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add featured</Text></TouchableOpacity>
+        <Text className="text-lg font-semibold">Experience</Text>
+        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity>
       </View>
-      <View className="mt-4 px-4 pb-4">
+      <View className="mt-4 px-4">
+        <Text className="text-lg font-semibold">Skills</Text>
+        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity>
+      </View>
+      <View className="mt-4 px-4">
+        <Text className="text-lg font-semibold">Education</Text>
+        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity>
+      </View>
+      <View className="mt-4 px-4">
+        <Text className="text-lg font-semibold">Contact</Text>
+        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity>
+      </View>
+      {/* <View className="mt-4 px-4 pb-4">
         <View className="flex justify-between">
           <View>
             <Text className="text-lg font-semibold">Private to you</Text>
@@ -193,9 +277,9 @@ const ProfileScreen = () => {
               </View>
             </View>
           </View>
-          {/* <FileEditIcon className="text-gray-600" /> */}
+          {/* <FileEditIcon className="text-gray-600" /> 
         </View>
-      </View>
+      </View> */}
       <View className="flex w-full items-center">
       <TouchableOpacity className="bg-red-500 p-2 rounded-lg items-center w-4/5" onPress={handleclick}>
          <Text>
@@ -205,6 +289,7 @@ const ProfileScreen = () => {
       </View>
     </View>
     </ScrollView>
+    </SafeAreaView>
  );
 };
 
