@@ -40,7 +40,7 @@ const login =   () => {
     }
   try {
     console.log(`data:${data.email}`);
-    const existinguser = await pb.collection('users').getFirstListItem(`email=${data.email}`);
+    const existinguser = await pb.collection('users').getFirstListItem(`email='${data.email}'`);
     console.log(`user:${existinguser}`);
     console.log(`record1:${record1}`);
     if(existinguser){
@@ -54,7 +54,7 @@ const login =   () => {
     }
   } catch (error) {
       // Handle other errors
-      if (error.data && error.data.code === 400) {
+      if (error.data && error.data.code === 404 || error.data && error.data.code === 404 ) {
         // Handle the 400 error for existinguser
         const record = await pb.collection('users').create(data);
         console.log(`record: ${JSON.stringify(record, null, 2)}`);
