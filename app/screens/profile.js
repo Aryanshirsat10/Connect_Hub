@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ToastAndroid, Platform,AlertIOS, ScrollView,RefreshControl } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ToastAndroid, Platform,Alert, ScrollView,RefreshControl } from 'react-native';
 import pb from "../services/connection";
 import { useNavigation } from 'expo-router';
 import UserAvatar from 'react-native-user-avatar';
@@ -19,7 +19,7 @@ const ProfileScreen = () => {
     if (Platform.OS === 'android') {
       ToastAndroid.show(msg, ToastAndroid.SHORT)
     } else {
-      AlertIOS.alert(msg);
+      Alert.alert(msg);
     }
   }
   const pickImage = async () => {

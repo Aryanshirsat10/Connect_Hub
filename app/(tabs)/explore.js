@@ -1,4 +1,4 @@
-import { View, Text,Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
+import { View, Text,Image, TouchableOpacity, TextInput, ScrollView,RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons'
 import Recommendpeople from '../components/Recommendpeople'
@@ -8,6 +8,7 @@ import pb from '../services/connection'
 const Explore = () => {
   const [grouplist, setGroupList] = useState([]);
   const [userlist, setUserList] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const fetchAlumni = async()=>{
     try {
       const records1 = await pb.collection('users').getFullList({
@@ -35,8 +36,24 @@ const Explore = () => {
     fetchAlumni();
     fetchgrouplist();
   },[]);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    // Here you can call your fetchPosts and fetchuser functions again
+    fetchAlumni();
+    fetchgrouplist();
+    // to refresh the data. Make sure to set refreshing back to false
+    // once the data is fetched.
+    setRefreshing(false);
+  }, []);
   return (
-    <ScrollView>
+    <ScrollView
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    }
+    >
       <View className="min-h-screen bg-white md:max-w-md md:mx-auto p-2">
       <View className="flex-row items-center justify-between border-t border-gray-300 p-2">
         <View className="flex-row bg-gray-200 rounded-full">

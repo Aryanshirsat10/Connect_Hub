@@ -20,7 +20,7 @@ function notifyMessage(msg) {
     AlertIOS.alert(msg);
   }
 }
-const Directmsg = () => {
+const Groupmsg = () => {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const { sender} = useLocalSearchParams();
@@ -53,16 +53,16 @@ const Directmsg = () => {
       //     // Add more messages as the conversation progresses
       //  ]
       // };
-      // const createdMessage = await pb.collection('chats').create(data);
+      // const createdMessage = await pb.collection('groups').create(data);
       // console.log(`Query: ${messageid}`);
-      const existingChat = await pb.collection('chats').getOne(messageid);
+      const existingChat = await pb.collection('groups').getOne(messageid);
       // console.log(`existing user:${JSON.stringify(existingChat)}`);
       if (!existingChat) {
         console.log('No existing chat found between these users.');
         return;
       }
   
-      const messagesList = existingChat.messageslist || [];
+      const messagesList = existingChat.groupmessageslist || [];
 
       // Step 2: Update the messages list
       const updatedMessagesList = [
@@ -74,9 +74,9 @@ const Directmsg = () => {
         }
       ];
       // Update the chat record with the new messages list
-      const res = await pb.collection('chats').update(existingChat.id, {
+      const res = await pb.collection('groups').update(existingChat.id, {
         text: newMessage,
-        messageslist: updatedMessagesList
+        groupmessageslist: updatedMessagesList
       });
 
       // Debugging: Log the response to see its structure
@@ -95,7 +95,7 @@ const Directmsg = () => {
  useEffect(() => {
   try {
     console.log("Attempting to subscribe to real-time updates");
-    unsubscribe = pb.collection('chats').subscribe('*', function (e) {
+    unsubscribe = pb.collection('groups').subscribe('*', function (e) {
       console.log(e.action);
       console.log(e.record);
       fetchInitialMessages();
@@ -110,7 +110,7 @@ const Directmsg = () => {
     //  console.log("Unsubscribing from real-time updates");
      if (unsubscribe) {
       console.log('Closing subscription');
-       pb.collection('chats').unsubscribe('*');
+       pb.collection('groups').unsubscribe('*');
      }
   };
  }, []); // Removed 'messages' from the dependency array if it's not necessary
@@ -118,7 +118,7 @@ const Directmsg = () => {
  const fetchInitialMessages = async () => {
   try {
     console.log('message id',messageid)
-    const resultList = await pb.collection('chats').getOne(messageid,{
+    const resultList = await pb.collection('groups').getOne(messageid,{
       // sort: 'created',
       expand: 'sender',
       // filter: {
@@ -137,7 +137,7 @@ const Directmsg = () => {
     // });
 
     // console.log(`Parsed messages: ${JSON.stringify(parsedMessages, null, 2)}`);
-    setMessages(resultList.messageslist); 
+    setMessages(resultList.groupmessageslist); 
   } catch (error) {
     console.log('fetch message error',error);
   }
@@ -192,7 +192,7 @@ useEffect(() => {
         <View className="flex flex-row items-start justify-start w-[80%]">
           <Image
             className="w-10 h-10 rounded-full"
-            source={{ uri: `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${senderid}/${senderprofile}?token=` }}
+            source={{ uri: `https://connecthub.pockethost.io/api/files/3fltudul115pos9/${senderid}/${senderprofile}?token=` }}
             resizeMode="cover"
           />
           <Text className="font-semibold pt-2 text-xl ml-4">{sender}</Text>
@@ -251,4 +251,4 @@ useEffect(() => {
   )
 }
 
-export default Directmsg
+export default Groupmsg

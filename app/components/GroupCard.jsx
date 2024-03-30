@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, router } from 'expo-router';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 
-const MessageCard = ({ content, sender, timestamp,currentuser,id}) => {
+const GroupCard = ({ content, sender, timestamp,currentuser,id}) => {
     const navigation = useNavigation();
     const date = parseISO(timestamp); // Parse the timestamp to a Date object
     let formattedTimestamp;
@@ -18,19 +18,19 @@ const MessageCard = ({ content, sender, timestamp,currentuser,id}) => {
         formattedTimestamp = format(date, 'dd/MM/yyyy'); // Format as 'dd/MM/yyyy' for other dates
     }
   return (
-    <TouchableOpacity onPress={() => router.push({pathname: '/screens/directmessage', params : {sender: sender?.username , senderprofile: sender?.avatar, senderid: sender?.id, currentuser: currentuser?.id, messageid:id}})}>
+    <TouchableOpacity onPress={() => router.push({pathname: '/screens/groupmessage', params : {sender: sender?.groupname , senderprofile: sender?.groupicon, senderid: sender?.id, currentuser: currentuser?.id, messageid:id}})}>
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between border-b border-gray-300">
       <View className="flex flex-row">
         <View className="flex items-center">
           <Image
-            source={{uri: `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${sender.id}/${sender.avatar}?token=`}}
+            source={{uri: `https://connecthub.pockethost.io/api/files/3fltudul115pos9/${sender.id}/${sender.groupicon}?token=`}}
             style={{ width: 60, height: 60, borderRadius: 20 }}
             className="rounded-full mr-3"
             resizeMode="cover"
           />
         </View>
         <View className="flex flex-col">
-          <Text className="text-xl font-semibold">{sender?.username}</Text>
+          <Text className="text-xl font-semibold">{sender.groupname}</Text>
           <Text className="text-sm text-gray-600">{content}</Text>
         </View>
       </View>
@@ -48,4 +48,4 @@ const MessageCard = ({ content, sender, timestamp,currentuser,id}) => {
   )
 }
 
-export default MessageCard
+export default GroupCard

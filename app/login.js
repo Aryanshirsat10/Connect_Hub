@@ -2,7 +2,7 @@ import { Link } from 'expo-router';
 import React, {useState} from 'react'
 import Svg, { Path } from 'react-native-svg';
 // import Toast from 'react-native-root-toast';
-import { View,Text, SafeAreaView, TextInput, TouchableOpacity,ToastAndroid, Platform, AlertIOS,Linking } from 'react-native';
+import { View,Text, SafeAreaView, TextInput, TouchableOpacity,ToastAndroid, Platform, Alert,Linking } from 'react-native';
 import { useNavigation } from 'expo-router';
 import pb from './services/connection';
 import 'react-native-url-polyfill/auto';
@@ -12,7 +12,7 @@ function notifyMessage(msg) {
   if (Platform.OS === 'android') {
     ToastAndroid.show(msg, ToastAndroid.SHORT)
   } else {
-    AlertIOS.alert(msg);
+    Alert.alert(msg);
   }
 }
 const login =   () => {

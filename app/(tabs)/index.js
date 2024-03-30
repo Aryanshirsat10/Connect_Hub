@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import CustomHeader from '../components/CustomHeader';
 import { useNavigation } from 'expo-router';
 import Post from  '../components/posts';
+import * as Notifications from 'expo-notifications';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import pb from '../services/connection';
 
@@ -62,6 +63,26 @@ const onRefresh = React.useCallback(() => {
   // to refresh the data. Make sure to set refreshing back to false
   // once the data is fetched.
   setRefreshing(false);
+}, []);
+
+useEffect(() => {
+  // Function to request permissions and register for push notifications
+  const setupNotifications = async () => {
+    // Request permissions
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert('No notification permissions!');
+      return;
+    }
+
+    // // Register for push notifications
+    // const token = await Notifications.getExpoPushTokenAsync();
+    // console.log(token.data);
+    // Save the token to your backend or use it to subscribe to a topic
+  };
+
+  // Call the setup function
+  setupNotifications();
 }, []);
 
   return (

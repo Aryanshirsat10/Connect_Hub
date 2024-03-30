@@ -9,6 +9,7 @@ export default function screensStack() {
             headerTitleAlign:"center",
          }}/>
          <Stack.Screen name="directmessage" options={{ headerShown: false }}/>
+         <Stack.Screen name="groupmessage" options={{ headerShown: false }}/>
          <Stack.Screen name="profile" options={{ headerShown: false, headerTitleAlign: "center" }}/>
       </Stack>
     );
