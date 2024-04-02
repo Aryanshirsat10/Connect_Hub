@@ -52,7 +52,7 @@ const messages = () => {
         sort: '-created',
         expand: 'sender,sender1'
     });
-    console.log(`messagelist${JSON.stringify(records,null,2)}`);
+    // console.log(`messagelist${JSON.stringify(records,null,2)}`);
 
 
     const enhancedMessages = await Promise.all(records.map(async (record) => {
@@ -67,7 +67,7 @@ const messages = () => {
       }
       return record; // Return the original record if there's no receiver
     }));
-    console.log(`enhancedmessage:${JSON.stringify(enhancedMessages,null,2)}`);
+    // console.log(`enhancedmessage:${JSON.stringify(enhancedMessages,null,2)}`);
     setMessagesList(enhancedMessages);
     } catch (error) {
       console.log(error);

@@ -11,6 +11,7 @@ export default function screensStack() {
          <Stack.Screen name="directmessage" options={{ headerShown: false }}/>
          <Stack.Screen name="groupmessage" options={{ headerShown: false }}/>
          <Stack.Screen name="profile" options={{ headerShown: false, headerTitleAlign: "center" }}/>
+         <Stack.Screen name="groupdetail" options={{ headerShown: false, headerTitleAlign: "center" }}/>
       </Stack>
     );
    }
