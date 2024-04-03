@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "Mp-miniproject",
-    "slug": "Mp-miniproject",
+    "name": "ConnectHub",
+    "slug": "ConnectHub",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo8.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/ConnectHub.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

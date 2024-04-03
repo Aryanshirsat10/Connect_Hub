@@ -11,6 +11,7 @@ const Post = ({ postData }) => {
   console.log(`current user:${currentUserId}`)
   console.log(`likedby${JSON.stringify(postData.likedby)}`);
   const likedBy = postData.likedby || [];
+  console.log(JSON.stringify(postData,null,2))
 
   // Initialize isHeartFilled based on whether the current user has liked the post
   const [isHeartFilled, setIsHeartFilled] = useState(false);
@@ -22,7 +23,7 @@ const Post = ({ postData }) => {
   // const [isHeartFilled, setIsHeartFilled] = useState(hasLiked || false);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [likesCount, setLikesCount] = useState(postData.likes || 0);
+  const [likesCount, setLikesCount] = useState(postData.likes ||0);
  
   const toggleModel = () => {
     setIsModelOpen(!isModelOpen);

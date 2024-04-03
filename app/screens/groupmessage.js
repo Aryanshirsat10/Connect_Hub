@@ -231,9 +231,9 @@ useEffect(() => {
       </View>
     </ScrollView>
       <View className="flex-row items-center justify-between p-2 z-10">
-        <TouchableOpacity className="rounded-full p-3">
+        {isMember ? (<TouchableOpacity className="rounded-full p-3">
           <Ionicons name="add" size={24} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity>) :(<></>)}
         {isMember ? (
           <TextInput
             className="flex-1 rounded-full bg-gray-200 px-4 py-2 text-sm"
@@ -247,9 +247,13 @@ useEffect(() => {
             You are not a member of this group.
           </Text>
           )}
-        <TouchableOpacity className="rounded-full p-3" onPress={sendMessage}>
-        <Feather name="send" size={24} color="black" />
-        </TouchableOpacity>
+        {isMember ? (
+          <TouchableOpacity className="rounded-full p-3" onPress={sendMessage}>
+          <Feather name="send" size={24} color="black" />
+          </TouchableOpacity>
+        ): (
+          <></>
+        )}
       </View>
       <View className="flex-row justify-between p-2">
         {/* Icon buttons go here */}

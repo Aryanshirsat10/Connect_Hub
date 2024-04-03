@@ -1,10 +1,38 @@
 import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
+import pb from '../services/connection';
 const Recommendpeople = ({user1}) => {
   const [isFollowing, setIsFollowing] = useState(false);
+  const handlefollow = async() =>{
+    if(!isFollowing){
+      try {
+        console.log(pb.authStore.model.id);
+        const record = await pb.collection('users').getOne(user1.id);
+        const record3 = await pb.collection('users').getOne(pb.authStore.model.id);
+        console.log(pb.authStore.model.id);
+        const updateData = {
+          ...record,
+          Followers: [...record["Followers"], pb.authStore.model.id],
+        };
+        console.log(user1.id);
+        console.log(JSON.stringify(updateData));
+        const updateData1 = {
+          ...record3,
+          Following: [...record3["Following"], user1.id],
+        };
+        console.log(JSON.stringify(updateData1));
+        const record1 = await pb.collection('users').update(user1.id, updateData);
+        const record2 = await pb.collection('users').update(pb.authStore.model.id, updateData1);
+        console.log("Updated successfully")
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
   const toggleFollow = () => {
     setIsFollowing(!isFollowing);
+    handlefollow();
  };
   return (
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between">

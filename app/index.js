@@ -15,7 +15,12 @@ const App = () => {
         <SafeAreaProvider>
         <SafeAreaView>
             <View className="flex justify-center items-center w-full h-full flex-col">
-                <Text className="text-4xl font-bold text-purple-400">ConnectHUb</Text>
+              <Image
+              className="w-40 h-40 rounded-full"
+              source={require('../assets/images/logo8.png')}
+              resizeMode="cover"
+              />
+                <Text className="text-4xl font-bold text-purple-400">ConnectHub</Text>
                 <Link href="/login" asChild>
                 <Pressable>
                   <Text className="text-2xl font-semibold text-purple-400">Login</Text>
