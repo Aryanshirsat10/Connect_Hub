@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ConnectHub",
-    "slug": "ConnectHub",
+    "slug": "connecthub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo8.png",
@@ -16,13 +16,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aryan10.connecthub"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon1.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.aryan10.connecthub"
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +47,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "395b7259-abe0-436b-bec6-8021dca31134"
+      }
+    },
+    "owner": "aryan10"
   }
 }
