@@ -1,9 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import pb from '../services/connection';
 const Recommendpeople = ({user1}) => {
   const [isFollowing, setIsFollowing] = useState(false);
+  useEffect(() => {
+    const checkIfFollowing = async () => {
+      try {
+        const currentUserRecord = await pb.collection('users').getOne(pb.authStore.model.id);
+        setIsFollowing(currentUserRecord.Following.includes(user1.id));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    checkIfFollowing();
+ }, [user1, ]); // This effect runs when the component mounts and whenever `user1` changes.
   const handlefollow = async() =>{
     if(!isFollowing){
       try {
@@ -28,6 +40,9 @@ const Recommendpeople = ({user1}) => {
       } catch (error) {
         console.log(error)
       }
+    }
+    else if(isFollowing){
+
     }
   }
   const toggleFollow = () => {
