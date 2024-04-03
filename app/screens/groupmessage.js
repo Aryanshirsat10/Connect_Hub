@@ -36,23 +36,6 @@ const Groupmsg = () => {
   const currentuser = pb.authStore.model.id;
   console.log(`sender from dm:${sender}`);
   const mess = currentuser === senderid ? 'sender' : 'sender1';
-  const fetchInitialMessages = async () => {
-    try {
-      console.log('message id',messageid)
-      const resultList = await pb.collection('groups').getOne(messageid,{
-      });
-      console.log('resultlist:',JSON.stringify(resultList,null,2));
-  
-      // console.log(`Parsed messages: ${JSON.stringify(resultList.groupmessagelist, null, 2)}`);
-      setMessages(resultList.groupmessagelist); 
-      setGroup(resultList);
-      const memberCheck = resultList.groupmembers.includes(currentuser);
-      setIsMember(memberCheck);
-    } catch (error) {
-      console.log('fetch message error',error);
-    }
-  };
-  
   const sendMessage = async () => {
     if (newMessage.trim() === '') {
       console.log('Message is empty. Not sending.');
@@ -61,7 +44,7 @@ const Groupmsg = () => {
     
    }
     // Check if the current user is a member of the group
-    if (!memberCheck) {
+    if (!isMember) {
         console.log('You are not a member of this group.');
         notifyMessage('You are not a member of this group.');
         return; // Return early if the user is not a member
@@ -141,6 +124,22 @@ const Groupmsg = () => {
   };
  }, []);
  
+ const fetchInitialMessages = async () => {
+  try {
+    console.log('message id',messageid)
+    const resultList = await pb.collection('groups').getOne(messageid,{
+    });
+    console.log('resultlist:',JSON.stringify(resultList,null,2));
+
+    // console.log(`Parsed messages: ${JSON.stringify(resultList.groupmessagelist, null, 2)}`);
+    setMessages(resultList.groupmessagelist); 
+    setGroup(resultList);
+    const memberCheck = resultList.groupmembers.includes(currentuser);
+    setIsMember(memberCheck);
+  } catch (error) {
+    console.log('fetch message error',error);
+  }
+};
   useEffect(() => {
     fetchInitialMessages();
  }, []);
