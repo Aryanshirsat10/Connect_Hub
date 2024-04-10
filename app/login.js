@@ -79,6 +79,10 @@ const login =   () => {
     }
   } catch (error) {
       // Handle other errors
+      if(error.data.code == 400){
+        notifyMessage('Invalid email or password');
+        console.log("Invalid email or password");
+      }
       console.error('Failed to authenticate:', error);
   }
  };

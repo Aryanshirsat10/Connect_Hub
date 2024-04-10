@@ -6,23 +6,17 @@ const Recommendpeople = ({user1}) => {
   const [isFollowing, setIsFollowing] = useState(false);
   useEffect(() => {
     const checkIfFollowing = async () => {
-      try {
-        const currentUserRecord = await pb.collection('users').getOne(pb.authStore.model.id);
-        setIsFollowing(currentUserRecord.Following.includes(user1.id));
-      } catch (error) {
-        console.log(error);
-      }
+        setIsFollowing(pb.authStore.model.Following.includes(user1.id));
     };
 
     checkIfFollowing();
  }, [user1, ]); // This effect runs when the component mounts and whenever `user1` changes.
   const handlefollow = async() =>{
-    if(!isFollowing){
       try {
         console.log(pb.authStore.model.id);
         const record = await pb.collection('users').getOne(user1.id);
-        const record3 = await pb.collection('users').getOne(pb.authStore.model.id);
         console.log(pb.authStore.model.id);
+        if(!isFollowing){
         const updateData = {
           ...record,
           Followers: [...record["Followers"], pb.authStore.model.id],
@@ -30,19 +24,34 @@ const Recommendpeople = ({user1}) => {
         console.log(user1.id);
         console.log(JSON.stringify(updateData));
         const updateData1 = {
-          ...record3,
-          Following: [...record3["Following"], user1.id],
+          ...pb.authStore.model,
+          Following: [...pb.authStore.model["Following"], user1.id],
         };
         console.log(JSON.stringify(updateData1));
         const record1 = await pb.collection('users').update(user1.id, updateData);
         const record2 = await pb.collection('users').update(pb.authStore.model.id, updateData1);
         console.log("Updated successfully")
-      } catch (error) {
-        console.log(error)
       }
-    }
-    else if(isFollowing){
-
+      else if(isFollowing){
+        const updateData = {
+          ...record,
+          Followers: record["Followers"].filter(followerId => followerId !== pb.authStore.model.id),
+        };
+        console.log(user1.id);
+        console.log(JSON.stringify(updateData));
+  
+        const updateData1 = {
+          ...pb.authStore.model,
+          Following: pb.authStore.model["Following"].filter(followingId => followingId !== user1.id),
+        };
+        console.log(JSON.stringify(updateData1));
+  
+        await pb.collection('users').update(user1.id, updateData);
+        await pb.collection('users').update(pb.authStore.model.id, updateData1);
+        console.log("Unfollowed successfully");
+      }
+    }catch(error){
+      console.log(error)
     }
   }
   const toggleFollow = () => {

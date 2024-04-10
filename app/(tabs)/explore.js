@@ -9,12 +9,14 @@ const Explore = () => {
   const [grouplist, setGroupList] = useState([]);
   const [userlist, setUserList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const fetchAlumni = async()=>{
     try {
       const records1 = await pb.collection('users').getFullList({
         sort: '-created',
     });
-    setUserList(records1);
+    const filteredUsers = records1.filter(user => user.id !== pb.authStore.model.id);
+    setUserList(filteredUsers);
     console.log(`user from explore:${JSON.stringify(records1)}`);
     } catch (error) {
       console.log(error);
@@ -31,7 +33,12 @@ const Explore = () => {
       console.log(error);
     }
   }
-
+  const filteredUsers = userlist.filter(user =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const filteredGroups = grouplist.filter(group =>
+    group.groupname.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   useEffect(()=>{
     fetchAlumni();
     fetchgrouplist();
@@ -64,20 +71,21 @@ const Explore = () => {
             className="flex-1 rounded-full bg-gray-200 px-4 py-2 text-sm"
             placeholder="Message"
             placeholderTextColor="#999"
+            onChangeText={text => setSearchTerm(text)}
           />
         </View>
       </View>
       <View className="mt-1 p-2">
         <Text className="text-xl font-bold">Recommendations</Text>
         <View className="mt-1 space-y-2" />
-        {userlist.map((user) => (
+        {filteredUsers.map((user) => (
               <Recommendpeople key={user.id} user1={user} />
             ))}
         </View>
         <View className="mt-1 p-2">
         <Text className="text-xl font-bold">Recommended Groups</Text>
         <View className="mt-1 space-y-2" />
-        {grouplist.map((group) => (
+        {filteredGroups.map((group) => (
               <Recommendgroups key={group.id} group={group} />
             ))}
         </View>

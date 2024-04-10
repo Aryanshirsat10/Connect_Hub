@@ -7,13 +7,11 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const ProfileScreen = () => {
+const initialprofile = () => {
+  const currentuser = pb.authStore.model;
+  const [image, setImage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [connections,setConnections] = useState(0);
-  const [followers,setFollowers] = useState(0);
-  const [following,setFollowing] = useState(0);
-  const [user1 ,setUser1] = useState({});
-  let unsubscribe;
+  const [profileimg, setProfileImg] = useState(null);
   function notifyMessage(msg) {
     if (Platform.OS === 'android') {
       ToastAndroid.show(msg, ToastAndroid.SHORT)
@@ -21,38 +19,38 @@ const ProfileScreen = () => {
       Alert.alert(msg);
     }
   }
-  // const pickImage = async () => {
-  //   // No permissions request is necessary for launching the image library
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     // aspect: [4, 3],
-  //     quality: 1,
-  //   });
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      // aspect: [4, 3],
+      quality: 1,
+    });
 
-  //   console.log(result);
+    console.log(result);
 
-  //   if (!result.canceled) {
-  //     setImage(result.assets[0].uri);
-  //   }
-  // };
-  // const pickImage1 = async () => {
-  //   // No permissions request is necessary for launching the image library
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     // aspect: [9, 16],
-  //     quality: 1,
-  //   });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+  const pickImage1 = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      // aspect: [9, 16],
+      quality: 1,
+    });
 
-  //   console.log(result);
+    console.log(result);
 
-  //   if (!result.canceled) {
-  //     setProfileImg(result.assets[0].uri);
-  //     const userId = pb.authStore.model.id;
-  //     await updateUserAvatar(userId, result.assets[0].uri);
-  //   }
-  // };
+    if (!result.canceled) {
+      setProfileImg(result.assets[0].uri);
+      const userId = pb.authStore.model.id;
+      await updateUserAvatar(userId, result.assets[0].uri);
+    }
+  };
   //format date
   function formatDate(dateString) {
     // Parse the date string into a Date object
@@ -70,65 +68,36 @@ const ProfileScreen = () => {
     return `${month} ${year}`;
 }
 
-//   const updateUserAvatar = async (userId, imageUri) => {
-//     try {
-//       const formData = new FormData();
-//       // Convert the image URI to a file object
-//       const file = {
-//         uri: imageUri,
-//         type: 'multipart/form-data', // Adjust the type based on the image format
-//         name: 'avatar.jpg', // Adjust the name as needed
-//       };
-//       formData.append('avatar', file);
-
-//       // Update the user record with the FormData
-//       const record = await pb.collection('users').update(userId, formData);
-//       console.log('User avatar updated successfully:', record);
-//     } catch (error) {
-//       console.error('Failed to update user avatar:', error);
-//     }
-//  };
-  const navigation = useNavigation();
-  const fetchUser = async () => {
-      setUser1(pb.authStore.model);
-      getUserCounts(pb.authStore.model);
-  };
-  useEffect(() => {
-    fetchUser();
- }, []);
-  
- //live update for  profile info
- useEffect(() => {
-  const userId = pb.authStore.model.id;
+  const updateUserAvatar = async (userId, imageUri) => {
     try {
-      console.log("Attempting to subscribe to real-time updates");
-      unsubscribe = pb.collection('users').subscribe(userId, function (e) {
-        console.log(e.action);
-        console.log(e.record);
-        setUser1(e.record); // Update the user's profile data
-      }, { /* other options like expand, custom headers, etc. */ }); 
+      const formData = new FormData();
+      // Convert the image URI to a file object
+      const file = {
+        uri: imageUri,
+        type: 'multipart/form-data', // Adjust the type based on the image format
+        name: 'avatar.jpg', // Adjust the name as needed
+      };
+      formData.append('avatar', file);
+
+      // Update the user record with the FormData
+      const record = await pb.collection('users').update(userId, formData);
+      console.log('User avatar updated successfully:', record);
     } catch (error) {
-      console.log(error);
+      console.error('Failed to update user avatar:', error);
     }
-    return () => {
-      if (unsubscribe) {
-        console.log('Closing subscription');
-         pb.collection('users').unsubscribe(userId);
-       }
-    };
- }, [])
- 
+ };
+  const navigation = useNavigation();
  const onRefresh = React.useCallback(() => {
   setRefreshing(true);
   // Here you can call your fetchPosts and fetchuser functions again
   // Call the function to fetch posts
-  fetchUser();
+  // fetchUser();
   // to refresh the data. Make sure to set refreshing back to false
   // once the data is fetched.
   setRefreshing(false);
 }, []);
  const shouldDisplayAvatar = () => {
-  return user1.avatar && user1.avatar.trim() !== '';
+  return currentuser.avatar && currentuser.avatar.trim() !== '';
 };
  const handleclick = ()=> {
   const response = pb.authStore.clear();
@@ -140,33 +109,6 @@ const ProfileScreen = () => {
     routes: [{ name: 'login' }],
    });
  }
-
- function getUserCounts(userData) {
-  // Initialize an object to hold the counts
-  const counts = {
-      connections: 0,
-      followers: 0,
-      following: 0
-  };
-
-  // Check if the user has connections and count them
-  if (userData.Connections && Array.isArray(userData.Connections)) {
-      counts.connections = userData.Connections.length;
-  }
-
-  // Check if the user has followers and count them
-  if (userData.Followers && Array.isArray(userData.Followers)) {
-      counts.followers = userData.Followers.length;
-  }
-
-  // Check if the user is following others and count them
-  if (userData.Following && Array.isArray(userData.Following)) {
-      counts.following = userData.Following.length;
-  }
-  setConnections(counts.connections);
-  setFollowers(counts.followers);
-  setFollowing(counts.following);
-}
 
  return (
   <SafeAreaView>
@@ -191,28 +133,30 @@ const ProfileScreen = () => {
         <View className="absolute top-1 right-2 bottom-0 flex justify-between p-3">
           {/* <SearchIcon className="text-white" />
           <MoreHorizontalIcon className="text-white" /> */}
+          <TouchableOpacity>
+            <Feather name="camera" size={24} color="black" onPress={pickImage}/>
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          </TouchableOpacity>
         </View>
         <View className="absolute top-24 left-[5%] transform -translate-x-1/2 p-1 bg-white rounded-full border-4 border-white">
           {shouldDisplayAvatar() ? (
                 <Image
                 className="w-24 h-24 rounded-full relative"
-                source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${user1.avatar}?token=`}} // Assuming userProfileImage is a URL to the user's profile image
+                source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${currentuser.avatar}?token=`}} // Assuming userProfileImage is a URL to the user's profile image
                 resizeMode="cover"
                 />
               ) : (
-                <UserAvatar size={100} name={user1.username} />
+                <UserAvatar size={100} name={currentuser.username} />
             )}
         </View>
-        {/* <TouchableOpacity className="absolute left-32 top-44" onPress={pickImage1}>
+        <TouchableOpacity className="absolute left-32 top-44" onPress={pickImage1}>
         <Feather name="camera" size={24} color="black"/>
-        </TouchableOpacity> */}
-        <TouchableOpacity  className="flex h-12 w-32 p-2 absolute top-40 right-5 items-center rounded-full border-2 border-red-400" onPress={() => router.push({pathname: '/screens/initialprofile'})}>
-            <Text className="font-bold text-lg">Edit profile</Text>
+        {/* {profileimg && <Image source={{ uri: profileimg }} style={{ width: 200, height: 200 }} />} */}
         </TouchableOpacity>
       </View>
       <View className="pt-16 pb-4 px-4">
-        <Text className="text-2xl font-bold">{user1.name}</Text>
-        <Text className="text-lg font-semibold text-gray-500">@{user1.username}</Text>
+        <Text className="text-2xl font-bold">{currentuser.name}</Text>
+        <Text className="text-lg font-semibold text-gray-500">@{currentuser.username}</Text>
         {/* <Text className="text-lg text-gray-600">Student at KJ Somaiya College of Engineering, Vidyavihar&nbsp;&nbsp;
           <Feather name="edit" size={20} color="black"/>
         </Text>
@@ -229,21 +173,7 @@ const ProfileScreen = () => {
         <Text className="text-lg font-medium text-gray-500">Just an engineering student trying new things</Text>
       </View>
       <View className="px-4">
-        <Text className="text-lg font-semibold"><Ionicons name="calendar-outline" size={18} color="black" /> Joined {formatDate(user1.created)}</Text>
-      </View>
-      <View className="mt-4 px-4 flex flex-row gap-x-3">
-        <View className="flex flex-row gap-x-1">
-        <Text className="text-lg font-semibold">{connections}</Text>
-        <Text className="text-lg font-medium text-gray-500">Connections</Text>
-        </View>
-        <View className="flex flex-row gap-x-1">
-        <Text className="text-lg font-semibold">{following}</Text>
-        <Text className="text-lg font-medium text-gray-500">Following</Text>
-        </View>
-        <View className="flex flex-row gap-x-1">
-        <Text className="text-lg font-semibold">{followers}</Text>
-        <Text className="text-lg font-medium text-gray-500">Followers</Text>
-        </View>
+        <Text className="text-lg font-semibold"><Ionicons name="calendar-outline" size={18} color="black" /> Joined {formatDate(currentuser.created)}</Text>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Experience</Text>
@@ -279,9 +209,6 @@ const ProfileScreen = () => {
           {/* <FileEditIcon className="text-gray-600" /> 
         </View>
       </View> */}
-      <View className="flex flex-wrap flex-row">
-      {/* implement post grid */}
-      </View>
       <View className="flex w-full items-center">
       <TouchableOpacity className="bg-red-500 p-2 rounded-lg items-center w-4/5" onPress={handleclick}>
          <Text>
@@ -295,4 +222,4 @@ const ProfileScreen = () => {
  );
 };
 
-export default ProfileScreen;
+export default initialprofile;

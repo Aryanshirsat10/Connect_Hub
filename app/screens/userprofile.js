@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ToastAndroid, Platform,Alert, ScrollView,RefreshControl } from 'react-native';
 import pb from "../services/connection";
-import { router, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import UserAvatar from 'react-native-user-avatar';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileScreen = () => {
+  const user = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
   const [connections,setConnections] = useState(0);
   const [followers,setFollowers] = useState(0);
   const [following,setFollowing] = useState(0);
   const [user1 ,setUser1] = useState({});
+  console.log(user);
   let unsubscribe;
   function notifyMessage(msg) {
     if (Platform.OS === 'android') {
@@ -21,38 +23,6 @@ const ProfileScreen = () => {
       Alert.alert(msg);
     }
   }
-  // const pickImage = async () => {
-  //   // No permissions request is necessary for launching the image library
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     // aspect: [4, 3],
-  //     quality: 1,
-  //   });
-
-  //   console.log(result);
-
-  //   if (!result.canceled) {
-  //     setImage(result.assets[0].uri);
-  //   }
-  // };
-  // const pickImage1 = async () => {
-  //   // No permissions request is necessary for launching the image library
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     // aspect: [9, 16],
-  //     quality: 1,
-  //   });
-
-  //   console.log(result);
-
-  //   if (!result.canceled) {
-  //     setProfileImg(result.assets[0].uri);
-  //     const userId = pb.authStore.model.id;
-  //     await updateUserAvatar(userId, result.assets[0].uri);
-  //   }
-  // };
   //format date
   function formatDate(dateString) {
     // Parse the date string into a Date object
@@ -70,28 +40,17 @@ const ProfileScreen = () => {
     return `${month} ${year}`;
 }
 
-//   const updateUserAvatar = async (userId, imageUri) => {
-//     try {
-//       const formData = new FormData();
-//       // Convert the image URI to a file object
-//       const file = {
-//         uri: imageUri,
-//         type: 'multipart/form-data', // Adjust the type based on the image format
-//         name: 'avatar.jpg', // Adjust the name as needed
-//       };
-//       formData.append('avatar', file);
-
-//       // Update the user record with the FormData
-//       const record = await pb.collection('users').update(userId, formData);
-//       console.log('User avatar updated successfully:', record);
-//     } catch (error) {
-//       console.error('Failed to update user avatar:', error);
-//     }
-//  };
   const navigation = useNavigation();
   const fetchUser = async () => {
-      setUser1(pb.authStore.model);
-      getUserCounts(pb.authStore.model);
+    //   try {
+    //     const record = await pb.collection('users').getOne(user);
+    //     setUser1(record);
+    //     getUserCounts(record);
+    //   } catch (error) {
+    //     console.log('error fetching user:',error)
+    //   }
+    setUser1(user);
+    getUserCounts(user);
   };
   useEffect(() => {
     fetchUser();
@@ -99,7 +58,7 @@ const ProfileScreen = () => {
   
  //live update for  profile info
  useEffect(() => {
-  const userId = pb.authStore.model.id;
+  const userId = user.id;
     try {
       console.log("Attempting to subscribe to real-time updates");
       unsubscribe = pb.collection('users').subscribe(userId, function (e) {
@@ -150,19 +109,20 @@ const ProfileScreen = () => {
   };
 
   // Check if the user has connections and count them
-  if (userData.Connections && Array.isArray(userData.Connections)) {
-      counts.connections = userData.Connections.length;
-  }
+  if (userData.Connections) {
+    counts.connections = userData.Connections.split(',').length;
+}
 
-  // Check if the user has followers and count them
-  if (userData.Followers && Array.isArray(userData.Followers)) {
-      counts.followers = userData.Followers.length;
-  }
+// Check if the user has followers and count them
+if (userData.Followers) {
+    counts.followers = userData.Followers.split(',').length;
+}
 
-  // Check if the user is following others and count them
-  if (userData.Following && Array.isArray(userData.Following)) {
-      counts.following = userData.Following.length;
-  }
+// Check if the user is following others and count them
+if (userData.Following) {
+    counts.following = userData.Following.split(',').length;
+}
+
   setConnections(counts.connections);
   setFollowers(counts.followers);
   setFollowing(counts.following);
@@ -196,36 +156,17 @@ const ProfileScreen = () => {
           {shouldDisplayAvatar() ? (
                 <Image
                 className="w-24 h-24 rounded-full relative"
-                source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${user1.avatar}?token=`}} // Assuming userProfileImage is a URL to the user's profile image
+                source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${user.id}/${user1.avatar}?token=`}} // Assuming userProfileImage is a URL to the user's profile image
                 resizeMode="cover"
                 />
               ) : (
                 <UserAvatar size={100} name={user1.username} />
             )}
         </View>
-        {/* <TouchableOpacity className="absolute left-32 top-44" onPress={pickImage1}>
-        <Feather name="camera" size={24} color="black"/>
-        </TouchableOpacity> */}
-        <TouchableOpacity  className="flex h-12 w-32 p-2 absolute top-40 right-5 items-center rounded-full border-2 border-red-400" onPress={() => router.push({pathname: '/screens/initialprofile'})}>
-            <Text className="font-bold text-lg">Edit profile</Text>
-        </TouchableOpacity>
       </View>
       <View className="pt-16 pb-4 px-4">
         <Text className="text-2xl font-bold">{user1.name}</Text>
         <Text className="text-lg font-semibold text-gray-500">@{user1.username}</Text>
-        {/* <Text className="text-lg text-gray-600">Student at KJ Somaiya College of Engineering, Vidyavihar&nbsp;&nbsp;
-          <Feather name="edit" size={20} color="black"/>
-        </Text>
-        <Text className="text-md text-gray-600">KJ Somaiya College of Engineering, Vidyavihar</Text>
-        <Text className="text-md text-gray-600">Mumbai, Maharashtra, India - 355 connections</Text> */}
-        {/* <View className="mt-3">
-          <TouchableOpacity className="mb-2 w-full items-center bg-blue-500 text-white p-2 rounded-lg">
-            <Text className="text-white">Open to job opportunities</Text>
-            </TouchableOpacity>
-          <Text className="text-md text-gray-600">Software Engineer Intern roles</Text>
-          <TouchableOpacity className="mt-1 mb-2 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>See all details</Text></TouchableOpacity>
-          <TouchableOpacity className="mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>All LinkedIn members</Text></TouchableOpacity>
-        </View> */}
         <Text className="text-lg font-medium text-gray-500">Just an engineering student trying new things</Text>
       </View>
       <View className="px-4">
@@ -260,27 +201,6 @@ const ProfileScreen = () => {
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Contact</Text>
         <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity>
-      </View>
-      {/* <View className="mt-4 px-4 pb-4">
-        <View className="flex justify-between">
-          <View>
-            <Text className="text-lg font-semibold">Private to you</Text>
-            <View className="flex mt-2">
-              <View className="mr-8">
-                <Text className="text-lg font-semibold">12</Text>
-                <Text className="text-sm text-gray-600">Who viewed your profile</Text>
-              </View>
-              <View>
-                <Text className="text-lg font-semibold">8</Text>
-                <Text className="text-sm text-gray-600">Search appearances</Text>
-              </View>
-            </View>
-          </View>
-          {/* <FileEditIcon className="text-gray-600" /> 
-        </View>
-      </View> */}
-      <View className="flex flex-wrap flex-row">
-      {/* implement post grid */}
       </View>
       <View className="flex w-full items-center">
       <TouchableOpacity className="bg-red-500 p-2 rounded-lg items-center w-4/5" onPress={handleclick}>

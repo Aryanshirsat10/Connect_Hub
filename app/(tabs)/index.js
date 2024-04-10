@@ -10,6 +10,7 @@ import pb from '../services/connection';
 const index = () => {
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
+  const [currentUser, setCurrentUser] = useState({})
   const [refreshing, setRefreshing] = useState(false);
   const handleBack = () => {
     navigation.goBack(); // Navigate back
@@ -17,12 +18,19 @@ const index = () => {
 
  const fetchPosts = async () => {
   try {
+    console.log('Fetching posts...');
+    console.log('user from pb model:',pb.authStore.model);
+    const followedUserIds = pb.authStore.model?.Following;
+    console.log('Followed user IDs:', followedUserIds);
+
     const records = await pb.collection('posts').getFullList({
       sort: '-created',
       expand: 'userid'
     });
     // console.log(`record from index file:${JSON.stringify(records,null,2)}`);
-    setPosts(records); // Update the posts state with fetched records
+    const filteredPosts = records.filter(post => post.userid === pb.authStore.model.id || followedUserIds.includes(post.userid));
+    console.log('Filtered posts:', filteredPosts);
+    setPosts(filteredPosts); // Update the posts state with fetched records
   } catch (error) {
     console.error('Failed to fetch posts:', error);
   }

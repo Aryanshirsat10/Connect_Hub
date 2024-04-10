@@ -10,16 +10,20 @@ export default function TabLayout() {
   const [user ,setUser] = useState({});
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const record = await pb.collection('users').getOne(`${pb.authStore.model.id}`);
-        console.log(`record:${JSON.stringify(record, null, 2)}`);
-        setUser(record);
-      } catch (error) {
-        console.log(error);
-      }
+        setUser(pb.authStore.model);
     };
 
     fetchUser();
+    // const userId = pb.authStore.model.id;
+    // pb.collection('users').subscribe(userId, function (e) {
+    //   console.log(e.action);
+    //   console.log(e.record);
+    //   setUser(e.record); // Update the user's profile data
+    // }, { /* other options like expand, custom headers, etc. */ });
+
+    // return () => {
+    //   pb.collection('users').unsubscribe(userId); // Remove the subscription
+    // };
  }, []);
   // Log the updated user state
   useEffect(() => {
@@ -52,7 +56,7 @@ export default function TabLayout() {
           headerRight: () => (
             <View className="pr-5">
               {/* <Link href="/screens/messages" asChild> */}
-                <TouchableOpacity onPress={() => router.push({pathname: '/screens/messages', params : {currentuser: user}})}>
+                <TouchableOpacity onPress={() => router.push({pathname: '/screens/(toptabs)/messages', params : {currentuser: user}})}>
                 <AntDesign name="message1" size={28} color="black" />
                 </TouchableOpacity>
               {/* </Link> */}

@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 export default function screensStack() {
     return (
       <Stack>
-         <Stack.Screen name="messages" options={{
+         <Stack.Screen name="(toptabs)" options={{
             title: "Messages",
             headerTitleAlign:"center",
          }}/>
@@ -12,6 +12,8 @@ export default function screensStack() {
          <Stack.Screen name="groupmessage" options={{ headerShown: false }}/>
          <Stack.Screen name="profile" options={{ headerShown: false, headerTitleAlign: "center" }}/>
          <Stack.Screen name="groupdetail" options={{ headerShown: false, headerTitleAlign: "center" }}/>
+         <Stack.Screen name="initialprofile" options={{headerShown: false}}/>
+         <Stack.Screen name="userprofile" options={{headerShown: false}}/>
       </Stack>
     );
    }
