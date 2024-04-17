@@ -4,11 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, router } from 'expo-router';
 
 
-const MemberCard = ({groupmember}) => {
+const MemberCard = ({groupmember, groupadmin}) => {
 const navigation = useNavigation();
-
   return (
-    <View className="flex w-full items-center space-x-4 p-2 flex-row justify-between border-b border-gray-300">
+    <View className="flex w-full items-center space-x-4 p-2 flex-row justify-between border-b border-gray-300 relative">
       <View className="flex flex-row">
         <View className="flex items-center">
           <Image
@@ -18,8 +17,9 @@ const navigation = useNavigation();
             resizeMode="cover"
           />
         </View>
-        <View className="flex">
+        <View className="flex flex-row justify-between w-[78%]">
           <Text className="text-xl font-semibold">{groupmember?.username}</Text>
+          {groupmember?.id === groupadmin ? <Text className="text-md h-7 font-medium bg-purple-400 text-gray-50 p-1 rounded-full">Group Admin</Text> : null}
         </View>
       </View>
       <View className="flex flex-row gap-4">

@@ -63,7 +63,7 @@ const groupmessages = () => {
         <View className="flex-row items-center justify-between border-t border-gray-300 p-2">
         <View className="flex-row bg-gray-200 rounded-full w-full mr-0">
           <TouchableOpacity className="rounded-full p-3 pr-0">
-              <Feather name="search" size={24} color="grey" />
+              <Feather name="search" size={24} color="gray" />
           </TouchableOpacity>    
           <TextInput
             className="flex-1 rounded-full bg-gray-200 px-4 py-2 text-sm"

@@ -49,6 +49,23 @@ const Groupmsg = () => {
         notifyMessage('You are not a member of this group.');
         return; // Return early if the user is not a member
     }
+    const response = await fetch('https://jain3.pythonanywhere.com//check-profanity', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Include any required authentication headers
+      },
+      body: JSON.stringify({
+        text:  newMessage,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+    if (data.profanity_probability >= 0.2) {
+      console.log('Message contains profanity. Not sending.');
+      notifyMessage('Message contains profanity. Not sending.');
+      return; // Return early if the message is empty
+    }
     try {
       // const data = {
       //   text: newMessage,

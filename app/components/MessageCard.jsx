@@ -17,6 +17,7 @@ const MessageCard = ({ content, sender, timestamp,currentuser,id}) => {
     } else {
         formattedTimestamp = format(date, 'dd/MM/yyyy'); // Format as 'dd/MM/yyyy' for other dates
     }
+    const displayContent = content.length > 18 ? `${content.slice(0, 18)}...` : content;
   return (
     <TouchableOpacity onPress={() => router.push({pathname: '/screens/directmessage', params : {sender: sender?.username , senderprofile: sender?.avatar, senderid: sender?.id, currentuser: currentuser?.id, messageid:id}})}>
     <View className="flex items-center space-x-4 bg-white p-2 flex-row justify-between border-b border-gray-300">
@@ -31,7 +32,7 @@ const MessageCard = ({ content, sender, timestamp,currentuser,id}) => {
         </View>
         <View className="flex flex-col">
           <Text className="text-xl font-semibold">{sender?.username}</Text>
-          <Text className="text-sm text-gray-600">{content}</Text>
+          <Text className="text-sm text-gray-600">{displayContent}</Text>
         </View>
       </View>
       <View className="flex flex-row gap-4">

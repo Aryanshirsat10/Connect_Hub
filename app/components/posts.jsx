@@ -20,7 +20,7 @@ const Post = ({ postData }) => {
   const likedBy = postData.likedby || [];
   const savedBy = postData.savedby || [];
   // console.log(JSON.stringify(postData,null,2));
-  const followingUserIds = pb.authStore.model.Following;
+  const connectionUserIds = pb.authStore.model.Connections;
   const [followingUsers, setFollowingUsers] = useState([]);
   // Initialize isHeartFilled based on whether the current user has liked the post
   const [isHeartFilled, setIsHeartFilled] = useState(false);
@@ -33,7 +33,6 @@ const Post = ({ postData }) => {
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(postData.likes || 0);
-
   const toggleModel = () => {
     setIsModelOpen(!isModelOpen);
   }
@@ -83,6 +82,42 @@ const Post = ({ postData }) => {
       console.error('Failed to update likes:', error);
    }
  };
+ // Determine if the current user is already connected with the post user
+const isAlreadyConnected = connectionUserIds.includes(postData.expand.userid.id);
+ const handleConnect = async () => {
+  if(isAlreadyConnected){
+    const record = await pb.collection('users').getOne(postData.expand.userid.id);
+    const updateData = {
+      ...record,
+      Connections: record["Connections"].filter(ConnectionId => ConnectionId !== pb.authStore.model.id),
+    };
+    // console.log(user1.id);
+    console.log(JSON.stringify(updateData));
+
+    const updateData1 = {
+      ...pb.authStore.model,
+      Connections: pb.authStore.model["Connections"].filter(ConnectionId => ConnectionId !== postData.expand.userid.id),
+    };
+    console.log(JSON.stringify(updateData1));
+
+    await pb.collection('users').update(postData.expand.userid.id, updateData);
+    await pb.collection('users').update(pb.authStore.model.id, updateData1);
+    console.log("Disconnected successfully");
+  }
+  try {
+    // Make a POST request to connect the current user with the post user
+    const data = {
+      "from": currentUserId,
+      "to": postData.expand.userid.id
+    };
+  
+  const record = await pb.collection('connectionrequests').create(data);
+  console.log(record);
+  console.log("Connection request added successfully")
+  } catch (error) {
+    console.error('Failed to connect:', error);
+  }
+};
 
 //  useEffect(()=>{
 //   //fetch users
@@ -174,8 +209,8 @@ const Post = ({ postData }) => {
         {/* Post Description */}
       <Text className="text-sm text-gray-500 mt-4">{postData.post_description}</Text>
       {/* Follow Button */}
-      <TouchableOpacity className="text-sm  border-gray-300 rounded px-2 py-1 mt-2">
-        <Text className="font-semibold text-[#007AFF]">Follow</Text>
+      <TouchableOpacity className="text-sm  border-gray-300 rounded px-2 py-1 mt-2" onPress={handleConnect}>
+        <Text className="font-semibold text-[#007AFF]">{isAlreadyConnected ? 'Disconnect' : 'Connect'}</Text>
       </TouchableOpacity>
       </View>
       <View className="flex flex-col justify-center items-center w-full h-80 mt-8 mb-4">

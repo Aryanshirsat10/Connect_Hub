@@ -202,13 +202,13 @@ if (userData.Following) {
         <Text className="text-lg font-semibold">Contact</Text>
         <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity>
       </View>
-      <View className="flex w-full items-center">
+      {/* <View className="flex w-full items-center">
       <TouchableOpacity className="bg-red-500 p-2 rounded-lg items-center w-4/5" onPress={handleclick}>
          <Text>
            logout
          </Text>
        </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
     </ScrollView>
     </SafeAreaView>

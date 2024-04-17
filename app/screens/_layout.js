@@ -14,6 +14,7 @@ export default function screensStack() {
          <Stack.Screen name="groupdetail" options={{ headerShown: false, headerTitleAlign: "center" }}/>
          <Stack.Screen name="initialprofile" options={{headerShown: false}}/>
          <Stack.Screen name="userprofile" options={{headerShown: false}}/>
+         <Stack.Screen name="jobdetails" options={{headerShown: false, headerTitleAlign: "center"}}/>
       </Stack>
     );
    }

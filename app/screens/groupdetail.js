@@ -122,7 +122,7 @@ const groupdetail = () => {
         <View className="flex flex-col items-start justify-start w-full p-3 bg-white mb-3">
             <Text className="font-medium text-gray-400 text-md">{memberCount} members</Text>
             {groupMembers.map((member, index) => (
-              <MemberCard key={index} groupmember={member} />
+              <MemberCard key={index} groupmember={member} groupadmin={groupdetail.groupadmin}/>
             ))}
             {console.log(groupdetail.groupmembers)}
         </View>
