@@ -74,7 +74,7 @@ const Recommendpeople = ({user1}) => {
         </View>
       </View>
       <View className="flex flex-row gap-2">
-      <TouchableOpacity className={`border-gray-300 rounded-lg px-2 py-1 mt-2 ${isFollowing? 'bg-gray-400' : 'bg-[#007AFF]'} ${isFollowing ? 'w-24' : 'w-20'} items-center shadow-xl`} onPress={toggleFollow}>
+      <TouchableOpacity className={`border-gray-300 rounded-lg px-2 py-1 mt-2 ${isFollowing? 'bg-gray-400' : 'bg-[#007AFF]'} ${isFollowing ? 'w-24' : 'w-20'} items-center`} onPress={toggleFollow}>
         <Text className="font-semibold text-lg text-white">{isFollowing ? 'Following' : 'Follow'}</Text>
       </TouchableOpacity>
       </View>
