@@ -1,10 +1,15 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import ConnectionCard from '../components/ConnectionCard'
 
 const notify = () => {
   return (
     <View>
-      <Text className="text-3xl p-5">notify</Text>
+      <ConnectionCard/>
+      <ConnectionCard/>
+      <ConnectionCard/>
+      <ConnectionCard/>
+      <ConnectionCard/>
     </View>
   )
 }
