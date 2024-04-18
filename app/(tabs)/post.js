@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Image, TouchableOpacity,ToastAndroid, Platform, AlertIOS } from 'react-native'
+import { View, Text, TextInput, Image, TouchableOpacity,ToastAndroid, Platform, Alert } from 'react-native'
 import React from 'react'
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
@@ -12,7 +12,7 @@ function notifyMessage(msg) {
   if (Platform.OS === 'android') {
     ToastAndroid.show(msg, ToastAndroid.SHORT)
   } else {
-    AlertIOS.alert(msg);
+    Alert.alert(msg);
   }
 }
 
@@ -40,6 +40,23 @@ const post = () => {
   };
   const createPost = async () => {
     console.log("createPost function called");
+    const response = await fetch('https://jain3.pythonanywhere.com//check-profanity', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Include any required authentication headers
+      },
+      body: JSON.stringify({
+        text:  postDescription,
+      }),
+    });
+    const data3 = await response.json();
+    console.log(data3);
+    if (data3.profanity_probability >= 0.2) {
+      console.log('Description contains profanity. Not sending.');
+      notifyMessage('Description contains profanity. Not sending.');
+      return; // Return early if the message is empty
+    }
     // Prepare the post data
     const data = {
       post_description: postDescription,

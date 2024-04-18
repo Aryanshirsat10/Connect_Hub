@@ -1,4 +1,4 @@
-import { View, Text,Image, TouchableOpacity, TextInput, ScrollView, RefreshControl,ToastAndroid, Platform, AlertIOS,Keyboard } from 'react-native'
+import { View, Text,Image, TouchableOpacity, TextInput, ScrollView, RefreshControl,ToastAndroid, Platform, Alert,Keyboard } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons'
@@ -17,7 +17,7 @@ function notifyMessage(msg) {
   if (Platform.OS === 'android') {
     ToastAndroid.show(msg, ToastAndroid.SHORT)
   } else {
-    AlertIOS.alert(msg);
+    Alert.alert(msg);
   }
 }
 const Groupmsg = () => {
