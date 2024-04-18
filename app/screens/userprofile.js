@@ -6,6 +6,10 @@ import UserAvatar from 'react-native-user-avatar';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ExperienceCard from '../components/ExperienceCard';
+import SkillCard from '../components/SkillCard';
+import EducationCard from '../components/EducationCard';
+import ContactCard from '../components/ContactCard';
 
 const ProfileScreen = () => {
   const user = useLocalSearchParams();
@@ -188,19 +192,23 @@ if (userData.Following) {
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Experience</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity> */}
+        <ExperienceCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Skills</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity> */}
+        <SkillCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Education</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity> */}
+        <EducationCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Contact</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity> */}
+        <ContactCard/>
       </View>
       {/* <View className="flex w-full items-center">
       <TouchableOpacity className="bg-red-500 p-2 rounded-lg items-center w-4/5" onPress={handleclick}>

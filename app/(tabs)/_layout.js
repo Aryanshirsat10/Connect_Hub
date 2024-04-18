@@ -99,7 +99,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="notifications"
+        name="(toptabs)"
         options={{
           title: 'Network',
           tabBarIcon: ({ color }) => <Ionicons name="people-outline" size={28} color={color} />,

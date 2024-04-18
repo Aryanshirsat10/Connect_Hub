@@ -6,6 +6,10 @@ import UserAvatar from 'react-native-user-avatar';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ExperienceCard from '../components/ExperienceCard';
+import SkillCard from '../components/SkillCard';
+import EducationCard from '../components/EducationCard';
+import ContactCard from '../components/ContactCard';
 
 const initialprofile = () => {
   const currentuser = pb.authStore.model;
@@ -32,6 +36,8 @@ const initialprofile = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      const userId = pb.authStore.model.id;
+      await updateCover(userId, result.assets[0].uri);
     }
   };
   const pickImage1 = async () => {
@@ -67,6 +73,24 @@ const initialprofile = () => {
     // Return the formatted date string
     return `${month} ${year}`;
 }
+const updateCover = async (userId, imageUri) => {
+  try {
+    const formData = new FormData();
+    // Convert the image URI to a file object
+    const file = {
+      uri: imageUri,
+      type: 'multipart/form-data', // Adjust the type based on the image format
+      name: 'cover.jpg', // Adjust the name as needed
+    };
+    formData.append('cover', file);
+
+    // Update the user record with the FormData
+    const record = await pb.collection('users').update(userId, formData);
+    console.log('User cover updated successfully:', record);
+  } catch (error) {
+    console.error('Failed to update user avatar:', error);
+  }
+};
 
   const updateUserAvatar = async (userId, imageUri) => {
     try {
@@ -99,6 +123,9 @@ const initialprofile = () => {
  const shouldDisplayAvatar = () => {
   return currentuser.avatar && currentuser.avatar.trim() !== '';
 };
+const shouldcover = () => {
+  return currentuser.cover && currentuser.cover.trim() !== '';
+};
  const handleclick = ()=> {
   const response = pb.authStore.clear();
   console.log(response);
@@ -109,6 +136,7 @@ const initialprofile = () => {
     routes: [{ name: 'login' }],
    });
  }
+ console.log(pb.authStore.model);
 
  return (
   <SafeAreaView>
@@ -125,17 +153,23 @@ const initialprofile = () => {
           <Ionicons name="chevron-back" size={26} color="black" />
         </TouchableOpacity>
       <View className="relative">
-        <Image
+      {/* {shouldcover() ? ( */}
+        {/* <Image
           className="w-full h-30 object-cover"
-          source={require('../../assets/images/background.png')}
+          source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${currentuser.cover}?token=`}}
+          resizeMode="cover"
+          onError={() => console.log('Failed to load image')}
+        />
+      ) : ( */}
+        <Image
+        className="w-full h-30 object-cover"
+        source={require('../../assets/images/background.png')}
           resizeMode="cover"
         />
+    {/* )} */}
         <View className="absolute top-1 right-2 bottom-0 flex justify-between p-3">
-          {/* <SearchIcon className="text-white" />
-          <MoreHorizontalIcon className="text-white" /> */}
           <TouchableOpacity>
             <Feather name="camera" size={24} color="black" onPress={pickImage}/>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           </TouchableOpacity>
         </View>
         <View className="absolute top-24 left-[5%] transform -translate-x-1/2 p-1 bg-white rounded-full border-4 border-white">
@@ -177,19 +211,23 @@ const initialprofile = () => {
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Experience</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity> */}
+        <ExperienceCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Skills</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity> */}
+        <SkillCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Education</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity> */}
+        <EducationCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Contact</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity> */}
+        <ContactCard/>
       </View>
       {/* <View className="mt-4 px-4 pb-4">
         <View className="flex justify-between">

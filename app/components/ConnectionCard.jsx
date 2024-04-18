@@ -5,7 +5,7 @@ import { parseISO, isToday, isYesterday, format, differenceInMinutes, difference
 import pb from '../services/connection';
 
 const ConnectionCard = ({connection}) => {
-  console.log(JSON.stringify(connection), "Connection Card");
+  // console.log(JSON.stringify(connection), "Connection Card");
   const date = parseISO(connection.created); // Parse the timestamp to a Date object
 let formattedTimestamp;
 
@@ -88,7 +88,7 @@ if (daysDifference > 0) {
   <View className="flex flex-row">
     <View className="flex items-center">
       <Image
-        source={require('../../assets/images/demopost.jpg')}
+        source={{uri: `https://connecthub.pockethost.io/api/files/_pb_users_auth_/${connection.expand?.from?.id}/${connection.expand?.from?.avatar}?token=`}}
         style={{ width: 40, height: 40, borderRadius: 20 }}
         resizeMode="cover"
       />

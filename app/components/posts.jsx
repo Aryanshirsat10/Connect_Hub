@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, Modal, FlatList} from 'react-native';
+import { View, Text, Image, TouchableOpacity, Modal, FlatList, Alert} from 'react-native';
 import { BottomSheetModal, useBottomSheetModal,BottomSheet } from '@gorhom/bottom-sheet';
 import CustomBottomSheetModal from './CustomBottomSheetModal';
 import CustomBottomSheet from './CustomBottomSheet';
@@ -85,6 +85,12 @@ const Post = ({ postData }) => {
  // Determine if the current user is already connected with the post user
 const isAlreadyConnected = connectionUserIds.includes(postData.expand.userid.id);
  const handleConnect = async () => {
+  if (postData.userid === pb.authStore.model.id) {
+    // Optionally, you can provide feedback to the user that they cannot connect with themselves
+    console.log("You cannot connect with yourself");
+    Alert.alert("You cannot connect with yourself");
+    return;
+  }
   if(isAlreadyConnected){
     const record = await pb.collection('users').getOne(postData.expand.userid.id);
     const updateData = {
@@ -104,6 +110,13 @@ const isAlreadyConnected = connectionUserIds.includes(postData.expand.userid.id)
     await pb.collection('users').update(pb.authStore.model.id, updateData1);
     console.log("Disconnected successfully");
   }
+  const existingRequest = await checkExistingConnectionRequest();
+  if (existingRequest) {
+    console.log("Connection request already exists");
+    Alert.alert("Connection request already exists");
+    return;
+    // Optionally, you can handle this case as per your requirement
+  }
   try {
     // Make a POST request to connect the current user with the post user
     const data = {
@@ -119,6 +132,20 @@ const isAlreadyConnected = connectionUserIds.includes(postData.expand.userid.id)
   }
 };
 
+const checkExistingConnectionRequest = async () => {
+  try {
+      // Check if there's a connection request from the current user to the post user
+      const querySnapshot = await pb.collection('connectionrequests').getFirstListItem(`to='${postData.userid}'`);
+      if (!querySnapshot.empty) {
+          // If a connection request exists, return true
+          return true;
+      }
+      return false;
+  } catch (error) {
+      console.error('Failed to check existing connection request:', error);
+      return false;
+  }
+};
 //  useEffect(()=>{
 //   //fetch users
 //   const fetchFollowingUsersDetails = async () => {

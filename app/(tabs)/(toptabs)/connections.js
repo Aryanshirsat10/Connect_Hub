@@ -1,11 +1,11 @@
 import { View, Text, ScrollView,RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import ConnectionCard from '../components/ConnectionCard'
-import pb from '../services/connection'
+import pb from '../../services/connection'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ViewConnection from '../../components/ViewConnection'
 
 const notify = () => {
-  const [connections, setConnections] = useState([]);
+  const [network, setNetwork] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -16,18 +16,17 @@ const notify = () => {
     // once the data is fetched.
     setRefreshing(false);
   }, []);
-  const fetchConnection =async() =>{
+  const fetchConnection = async() =>{
     try {
-      const records = await pb.collection('connectionrequests').getFullList({
-        sort: '-created',
-        expand: 'from,to',
-    });
-    console.log(JSON.stringify(records));
-    const filteredConnections = records.filter(connection => connection.from != pb.authStore.model.id);
-    setConnections(filteredConnections);
+        const record = await pb.collection('users').getOne(pb.authStore.model.id, {
+            expand: 'Connections',
+        });
+        console.log('network: ',record);
+        setNetwork(record.expand.Connections);
     } catch (error) {
-      console.log(error);
+        console.log(error);
     }
+    
   };
 
 
@@ -46,9 +45,9 @@ const notify = () => {
       }
       >
     <View>
-      {connections.map((connection) => (
-            <ConnectionCard key={connection._id} connection={connection}/>
-            ))}
+        {network.map((connection) => (
+            <ViewConnection key={connection.id} connection={connection}/>
+        ))} 
     </View>
     </ScrollView>
     </SafeAreaView>

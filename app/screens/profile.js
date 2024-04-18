@@ -6,6 +6,10 @@ import UserAvatar from 'react-native-user-avatar';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ExperienceCard from '../components/ExperienceCard';
+import SkillCard from '../components/SkillCard';
+import EducationCard from '../components/EducationCard';
+import ContactCard from '../components/ContactCard';
 
 const ProfileScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -182,10 +186,15 @@ const ProfileScreen = () => {
       <TouchableOpacity className="left-3 top-3 absolute z-10 bg-slate-300 rounded-full w-fit" onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={26} color="black" />
         </TouchableOpacity>
-      <View className="relative">
-        <Image
+      <View className="flex w-full relative">
+        {/* <Image
           className="w-full h-30 object-cover"
-          source={require('../../assets/images/background.png')}
+          source={{uri : `https://connecthub.pockethost.io/api/files/_pb_users_auth_/rluobpy5ygobpda/cover_8WDwc70n9G.jpg?token=`}}
+          resizeMode="cover"
+        /> */}
+        <Image
+        className="w-full h-30 object-cover"
+        source={require('../../assets/images/background.png')}
           resizeMode="cover"
         />
         <View className="absolute top-1 right-2 bottom-0 flex justify-between p-3">
@@ -247,19 +256,23 @@ const ProfileScreen = () => {
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Experience</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Experience</Text></TouchableOpacity> */}
+        <ExperienceCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Skills</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Skiils</Text></TouchableOpacity> */}
+        <SkillCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Education</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Education</Text></TouchableOpacity> */}
+        <EducationCard/>
       </View>
       <View className="mt-4 px-4">
         <Text className="text-lg font-semibold">Contact</Text>
-        <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity>
+        {/* <TouchableOpacity className="mt-2 mb-4 w-full bg-gray-100 text-gray-800 p-2 rounded-lg"><Text>Add Contact</Text></TouchableOpacity> */}
+        <ContactCard/>
       </View>
       {/* <View className="mt-4 px-4 pb-4">
         <View className="flex justify-between">
