@@ -6,6 +6,7 @@ import UserAvatar from 'react-native-user-avatar';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ExperienceCard from '../components/ExperienceCard';
 import SkillCard from '../components/SkillCard';
 import EducationCard from '../components/EducationCard';
@@ -134,15 +135,20 @@ const ProfileScreen = () => {
  const shouldDisplayAvatar = () => {
   return user1.avatar && user1.avatar.trim() !== '';
 };
- const handleclick = ()=> {
-  const response = pb.authStore.clear();
-  console.log(response);
-  notifyMessage("Logout successfull");
-  console.log("logout successful");
-  navigation.reset({
-    index: 0,
-    routes: [{ name: 'login' }],
-   });
+ const handleclick = async()=> {
+  try {
+    await AsyncStorage.removeItem('loggedInUser');
+    const response = pb.authStore.clear();
+    console.log(response);
+    notifyMessage("Logout successfull");
+    console.log("logout successful");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'login' }],
+     }); 
+  } catch (error) {
+    console.log(error);
+  }
  }
 
  function getUserCounts(userData) {

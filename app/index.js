@@ -1,8 +1,10 @@
 import { View,ScrollView, Text,Image,TouchableOpacity, SafeAreaView,Pressable } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { Link } from 'expo-router';
 import { useNavigation } from 'expo-router';
+import pb from './services/connection';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const App = () => {
@@ -10,6 +12,33 @@ const App = () => {
   const handleBack = () => {
     navigation.goBack(); // Navigate back
  };
+
+ 
+ const fetchStoredLoginDetails = async () => {
+  try {
+    const storedUser = await AsyncStorage.getItem('loggedInUser');
+    if (storedUser !== null) {
+      const { email, password } = JSON.parse(storedUser);
+      console.log(email,password);
+      const authData = await pb.collection('users').authWithPassword(email.toLowerCase().toString(),password.toLowerCase().toString());
+    if(pb.authStore.isValid.toString()){
+      console.log("login successfull");
+      navigation.navigate('(tabs)');
+    }
+      // Use fetched email and password for further authentication or navigation
+    } else {
+      navigation.navigate('login');
+      // No stored login details found, proceed with normal login
+    }
+  } catch (error) {
+    console.error('Error fetching stored login details:', error);
+  }
+};
+
+useEffect(() => {
+  // Fetch stored login details when the app starts
+  fetchStoredLoginDetails();
+}, []);
   return (
     <RootSiblingParent>
         <SafeAreaProvider>

@@ -5,6 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import { View,Text, SafeAreaView, TextInput, TouchableOpacity,ToastAndroid, Platform, Alert,Linking } from 'react-native';
 import { useNavigation } from 'expo-router';
 import pb from './services/connection';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-url-polyfill/auto';
 import EventSource from "react-native-sse";
 global.EventSource = EventSource;
@@ -73,6 +74,8 @@ const login =   () => {
     // console.log(pb.authStore.token);
     // console.log(pb.authStore.model.id);
     if(pb.authStore.isValid.toString()){
+      const stored = await AsyncStorage.setItem('loggedInUser', JSON.stringify({ email, password }));
+      console.log(stored);
       notifyMessage('Login successful');
       console.log("login successfull");
       navigation.navigate('(tabs)');
