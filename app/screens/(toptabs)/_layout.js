@@ -22,8 +22,8 @@ const Layout = () =>{
             tabBarIndicatorStyle: { backgroundColor: '#1C87ED'},
             tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold', textTransform: 'capitalize'}
         }}>
-            <MaterialTopTabs.Screen name='messages' options={{ title : "Directmessages"}} />
-            <MaterialTopTabs.Screen name='groupmessages' options={{ title : "Groupchats"}} />
+            <MaterialTopTabs.Screen name='messages' options={{ title : "Direct Messages"}} />
+            <MaterialTopTabs.Screen name='groupmessages' options={{ title : "Group Chats"}} />
         </MaterialTopTabs>
     );
 };
