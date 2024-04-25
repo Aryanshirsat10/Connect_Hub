@@ -1,5 +1,7 @@
 import { View, Text,Image, TouchableOpacity, TextInput, ScrollView, RefreshControl,ToastAndroid, Platform, Alert,Keyboard } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons'
 import { Feather } from '@expo/vector-icons';
@@ -20,7 +22,20 @@ function notifyMessage(msg) {
     Alert.alert(msg);
   }
 }
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+
 const Directmsg = () => {
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const { sender} = useLocalSearchParams();
@@ -102,12 +117,33 @@ const Directmsg = () => {
       // Optionally, update the local state to reflect the new message
       setNewMessage('');
       setMessages([...(Array.isArray(messages) ? messages : []), { sender: currentuser, receiver: senderid, message: newMessage }]);
+      sendNotification();
     } catch (error) {
       console.error('Error sending message:', error);
     // Log the entire error object for more detailed debugging
     console.error('Error details:', error);
     }
  };
+
+//notification
+useEffect(() => {
+  registerForPushNotificationsAsync().then(token => setExpoPushToken(token)).catch((err)=> console.log(err));
+
+  notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+    setNotification(notification);
+  });
+
+  responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+    console.log(response);
+  });
+
+  return () => {
+    Notifications.removeNotificationSubscription(notificationListener.current);
+    Notifications.removeNotificationSubscription(responseListener.current);
+  };
+}, []);
+
+
  //realtime
  useEffect(() => {
   try {
@@ -131,7 +167,72 @@ const Directmsg = () => {
      }
   };
  }, []); // Removed 'messages' from the dependency array if it's not necessary
- 
+ const sendNotification = async () => {
+  console.log("Sending push notification...");
+  let receivertoken;
+  try {
+    const record = await pb.collection('users').getOne(senderid);
+    receivertoken = record.expotoken;
+  } catch (error) {
+    console.log(error);
+  }
+  // notification message
+  const message = {
+    to: receivertoken,
+    sound: "default",
+    title: sender,
+    body: newMessage,
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      host: "exp.host",
+      accept: "application/json",
+      "accept-encoding": "gzip, deflate",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
+};
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync({
+      projectId: "395b7259-abe0-436b-bec6-8021dca31134"
+    })).data;
+    console.log(token);
+    const data= {
+      "expotoken": token
+    }
+    const record = await pb.collection('users').update(pb.authStore.model.id,data);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  return token;
+}
  const fetchInitialMessages = async () => {
   try {
     console.log('message id',messageid)
