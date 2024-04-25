@@ -180,7 +180,7 @@ useEffect(() => {
   const message = {
     to: receivertoken,
     sound: "default",
-    title: sender,
+    title: currentuser,
     body: newMessage,
   };
 
