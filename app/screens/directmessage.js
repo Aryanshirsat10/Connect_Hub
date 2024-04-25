@@ -180,7 +180,7 @@ useEffect(() => {
   const message = {
     to: receivertoken,
     sound: "default",
-    title: currentuser,
+    title: pb.authStore.model.name,
     body: newMessage,
   };
 
