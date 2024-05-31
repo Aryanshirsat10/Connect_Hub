@@ -1,6 +1,7 @@
-# ConnectHub, an innovative platform designed to transform the way students and alumni connect and collaborate within the educational community.
+## ConnectHub, an innovative platform designed to transform the way students and alumni connect and collaborate within the educational community.
 
-Screenshots of the application
+# Screenshots of the application
+
 ![image](https://github.com/Aryanshirsat10/Connect_Hub/assets/99379971/d6040a15-0382-4097-98d6-e03f7bdc1546)
 ![image](https://github.com/Aryanshirsat10/Connect_Hub/assets/99379971/c0a8af3f-17ba-4732-849a-5a250e46ce29)
 ![image](https://github.com/Aryanshirsat10/Connect_Hub/assets/99379971/a667a5ef-b7f8-46ea-b807-b04712b410d3)
